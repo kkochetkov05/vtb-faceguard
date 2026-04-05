@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VTB FaceGuard Demo Overview</title>
+    <style>
+      :root {
+        --bg: #f3f6fb;
+        --surface: #ffffff;
+        --surface-alt: #eef4ff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --line: #dbe4f0;
+        --primary: #2563ff;
+        --primary-dark: #0b1f54;
+        --success: #169b62;
+        --success-bg: #ebfff6;
+        --warning: #c68412;
+        --warning-bg: #fff7e8;
+        --danger: #d04545;
+        --danger-bg: #fff0f0;
+        --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        --radius: 24px;
+        --radius-sm: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at top right, rgba(37, 99, 255, 0.08), transparent 24%),
+          linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      .page {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0 64px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 32px;
+        border-radius: 32px;
+        color: #fff;
+        background: linear-gradient(135deg, #03173f 0%, #0b43d1 65%, #3478ff 100%);
+        box-shadow: var(--shadow);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .eyebrow,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+      }
+
+      .hero h1 {
+        max-width: 720px;
+        margin: 16px 0 10px;
+        font-size: clamp(32px, 5vw, 54px);
+        line-height: 1.02;
+      }
+
+      .hero p {
+        max-width: 700px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 20px;
+        margin-top: 28px;
+      }
+
+      .hero-note,
+      .hero-stat {
+        padding: 18px 20px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .hero-stat strong {
+        display: block;
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+
+      .section {
+        margin-top: 24px;
+        padding: 26px;
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(219, 228, 240, 0.9);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(6px);
+      }
+
+      .section-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .section h2 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .section p.section-copy {
+        margin: 6px 0 0;
+        color: var(--muted);
+        max-width: 760px;
+        line-height: 1.55;
+      }
+
+      .grid-3,
+      .grid-2,
+      .cards {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .card h3,
+      .card h4 {
+        margin: 0;
+      }
+
+      .card p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .flow-step {
+        position: relative;
+      }
+
+      .flow-step::after {
+        content: "";
+        position: absolute;
+        top: 26px;
+        right: -10px;
+        width: 20px;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(37, 99, 255, 0.5), rgba(37, 99, 255, 0));
+      }
+
+      .flow-step:last-child::after {
+        display: none;
+      }
+
+      .step-index {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--surface-alt);
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .screen-shells {
+        display: grid;
+        grid-template-columns: 0.7fr 0.7fr 1.1fr;
+        gap: 18px;
+      }
+
+      .phone,
+      .atm {
+        border-radius: 28px;
+        overflow: hidden;
+        background: #0d1528;
+        border: 1px solid rgba(15, 23, 42, 0.14);
+        box-shadow: var(--shadow);
+      }
+
+      .phone-top,
+      .atm-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        color: rgba(255, 255, 255, 0.78);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .phone-body {
+        padding: 18px;
+        background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      }
+
+      .mini-card,
+      .toolbar,
+      .chip-row span,
+      .timeline li,
+      .result-block {
+        border-radius: 16px;
+      }
+
+      .mini-card {
+        padding: 16px;
+        background: #fff;
+        border: 1px solid var(--line);
+        margin-bottom: 14px;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .tool {
+        padding: 12px 10px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid var(--line);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .atm {
+        background: #0a0f1d;
+      }
+
+      .atm-body {
+        padding: 20px;
+        color: #fff;
+      }
+
+      .camera-box {
+        min-height: 240px;
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 56%),
+          linear-gradient(180deg, #111a2d 0%, #0b101e 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 18px;
+      }
+
+      .atm-controls {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .status-box,
+      .action,
+      .result-panel {
+        width: 100%;
+        border-radius: 18px;
+      }
+
+      .status-box {
+        padding: 18px;
+        background: #fff;
+        color: var(--text);
+      }
+
+      .status-box h3 {
+        margin: 0 0 6px;
+        font-size: 32px;
+      }
+
+      .status-box p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .action {
+        padding: 15px 18px;
+        border: 0;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: default;
+      }
+
+      .action.primary {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .action.secondary {
+        background: #fff;
+        color: var(--text);
+      }
+
+      .result-panel {
+        padding: 18px;
+        background: #fff;
+        color: var(--text);
+        border: 1px solid var(--line);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .metric {
+        padding: 14px;
+        border-radius: 16px;
+        background: #f8fbff;
+      }
+
+      .metric label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 24px;
+      }
+
+      .timeline {
+        list-style: none;
+        padding: 0;
+        margin: 14px 0 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .timeline li {
+        padding: 12px 14px;
+        background: #f8fbff;
+        border: 1px solid var(--line);
+        color: #334155;
+        line-height: 1.45;
+      }
+
+      .badge {
+        border: 1px solid transparent;
+      }
+
+      .badge.live {
+        color: var(--primary);
+        background: rgba(37, 99, 255, 0.08);
+        border-color: rgba(37, 99, 255, 0.16);
+      }
+
+      .badge.success {
+        color: var(--success);
+        background: var(--success-bg);
+        border-color: rgba(22, 155, 98, 0.16);
+      }
+
+      .badge.review {
+        color: var(--warning);
+        background: var(--warning-bg);
+        border-color: rgba(198, 132, 18, 0.18);
+      }
+
+      .badge.alert {
+        color: var(--danger);
+        background: var(--danger-bg);
+        border-color: rgba(208, 69, 69, 0.16);
+      }
+
+      .scenario {
+        padding: 20px;
+        border-radius: 22px;
+        border: 1px solid var(--line);
+      }
+
+      .scenario.success {
+        background: linear-gradient(180deg, #ffffff 0%, #f3fff9 100%);
+      }
+
+      .scenario.review {
+        background: linear-gradient(180deg, #ffffff 0%, #fffaf0 100%);
+      }
+
+      .scenario.alert {
+        background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+      }
+
+      .scenario h3 {
+        margin: 12px 0 8px;
+        font-size: 22px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .chip-row span {
+        padding: 8px 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        font-size: 13px;
+        color: #334155;
+      }
+
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .decision-card {
+        padding: 18px;
+        border-radius: 20px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .decision-card ul {
+        margin: 12px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .footer-note {
+        margin-top: 22px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: #fff;
+        border: 1px dashed rgba(37, 99, 255, 0.24);
+        color: #334155;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .screen-shells,
+        .decision-grid,
+        .grid-3,
+        .grid-2,
+        .metrics {
+          grid-template-columns: 1fr;
+        }
+
+        .flow-step::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          width: min(100vw - 20px, 1180px);
+          padding-top: 20px;
+        }
+
+        .hero,
+        .section {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <span class="eyebrow">VTB FaceGuard · demo overview</span>
+        <h1>Демо-концепт защиты снятия наличных через биометрию</h1>
+        <p>
+          Клиент подключает дополнительную защиту в интерфейсе, похожем на ВТБ Онлайн,
+          сохраняет фото лица, а затем банкомат проверяет личность и выбирает один
+          из трёх продуктовых сценариев: разрешить, запросить подтверждение или
+          задержать операцию.
+        </p>
+
+        <div class="hero-grid">
+          <div class="hero-note">
+            <strong>Что показывает страница</strong>
+            Это не живая копия приложения, а компактный html-макет для команды:
+            в одном месте собраны клиентский flow, ATM-сценарий и продуктовая логика.
+          </div>
+          <div class="hero-stat">
+            <strong>3 сценария</strong>
+            green / yellow / red с банковским copy, event timeline и demo-ready подачей.
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Пользовательский путь</h2>
+            <p class="section-copy">
+              Основной сценарий остаётся коротким и понятным: подключение защиты,
+              загрузка фото, проверка личности у банкомата и реакция системы.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card flow-step">
+            <span class="step-index">1</span>
+            <h3 style="margin-top: 14px;">Подключение защиты</h3>
+            <p>
+              В интерфейсе банка клиент включает дополнительную защиту снятия наличных.
+            </p>
+          </div>
+          <div class="card flow-step">
+            <span class="step-index">2</span>
+            <h3 style="margin-top: 14px;">Сохранение фото</h3>
+            <p>
+              Клиент загружает фото лица, которое используется как эталон при проверке.
+            </p>
+          </div>
+          <div class="card flow-step">
+            <span class="step-index">3</span>
+            <h3 style="margin-top: 14px;">Проверка у банкомата</h3>
+            <p>
+              Банкомат сверяет лицо, оценивает liveness и запускает подходящий сценарий.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Как это выглядит в интерфейсе</h2>
+            <p class="section-copy">
+              Слева клиентское приложение, справа ATM-экран с живой камерой,
+              статусом операции и компактной сводкой проверки.
+            </p>
+          </div>
+        </div>
+
+        <div class="screen-shells">
+          <div class="phone">
+            <div class="phone-top">
+              <span>ВТБ Онлайн</span>
+              <span>Защита</span>
+            </div>
+            <div class="phone-body">
+              <div class="mini-card" style="background: linear-gradient(135deg, #0a2b80, #2563ff); color: #fff;">
+                <h3 style="margin: 0;">Дополнительная защита</h3>
+                <p style="margin-top: 8px; color: rgba(255,255,255,0.78);">
+                  При снятии наличных система сверяет лицо с сохранённым фото.
+                </p>
+              </div>
+              <div class="mini-card">
+                <h4>Защита снятия наличных</h4>
+                <p>Услуга подключена. Фото сохранено и готово к использованию.</p>
+              </div>
+              <div class="toolbar">
+                <div class="tool">Перевод</div>
+                <div class="tool">Пополнить</div>
+                <div class="tool">Защита</div>
+                <div class="tool">История</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-top">
+              <span>Настройка</span>
+              <span>Фото</span>
+            </div>
+            <div class="phone-body">
+              <div class="mini-card">
+                <h4>Сохранить фото</h4>
+                <p>Клиент загружает фото лица для защиты снятия наличных.</p>
+              </div>
+              <div class="mini-card" style="text-align: center;">
+                <div style="width: 118px; height: 118px; margin: 0 auto; border-radius: 28px; background: linear-gradient(180deg, #dbeafe, #bfdbfe);"></div>
+                <p>Фото сохранено. Защита подключена.</p>
+              </div>
+              <div class="mini-card">
+                <h4>Что дальше</h4>
+                <p>При следующем снятии наличных система проверит личность у банкомата.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="atm">
+            <div class="atm-top">
+              <span>ВТБ ATM Demo</span>
+              <span>ATM #00247</span>
+            </div>
+            <div class="atm-body">
+              <div class="camera-box">
+                Камера ноутбука используется как камера банкомата.<br />
+                Здесь показывается live frame или fallback image.
+              </div>
+
+              <div class="atm-controls">
+                <div class="status-box">
+                  <h3>Ожидание</h3>
+                  <p>Приложите карту к банкомату для начала операции.</p>
+                </div>
+                <button class="action primary">Приложить карту</button>
+                <button class="action secondary">Сбросить сценарий</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Сценарии ATM-проверки</h2>
+            <p class="section-copy">
+              Продуктовая логика строится вокруг трёх простых состояний. Они легко
+              объясняются на презентации и выглядят как естественная логика банка.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="scenario success">
+            <span class="badge success">SUCCESS</span>
+            <h3>Операция разрешена</h3>
+            <p>
+              Лицо совпадает с эталоном, живое присутствие подтверждено, банкомат
+              продолжает операцию без задержек.
+            </p>
+            <div class="chip-row">
+              <span>match высокий</span>
+              <span>liveness passed</span>
+              <span>выдача наличных</span>
+            </div>
+          </div>
+
+          <div class="scenario review">
+            <span class="badge review">REVIEW</span>
+            <h3>Нужно подтверждение</h3>
+            <p>
+              Есть расхождение или пограничный score. Банкомат показывает владельцу
+              вопрос: «Это вы?» и ждёт подтверждение.
+            </p>
+            <div class="chip-row">
+              <span>частичное несоответствие</span>
+              <span>step-up сценарий</span>
+              <span>подтверждение владельца</span>
+            </div>
+          </div>
+
+          <div class="scenario alert">
+            <span class="badge alert">ALERT</span>
+            <h3>Операция задержана</h3>
+            <p>
+              Система видит высокий риск: сильное несовпадение, подозрение на spoof
+              или провал liveness. Банкомат запускает защитный сценарий.
+            </p>
+            <div class="chip-row">
+              <span>spoof risk</span>
+              <span>delay and alert</span>
+              <span>доп. защита</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Пример экрана результата</h2>
+            <p class="section-copy">
+              Справа от ATM-viewport интерфейс показывает решение системы,
+              метрики проверки и event timeline без перегруза.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="result-panel">
+            <span class="badge review">REVIEW</span>
+            <h3 style="margin: 14px 0 4px;">Есть расхождение. Это вы?</h3>
+            <p style="margin: 0; color: var(--muted); line-height: 1.55;">
+              Система не смогла однозначно подтвердить личность. Если операцию
+              выполняет владелец карты, он может подтвердить её прямо на экране.
+            </p>
+
+            <div class="metrics">
+              <div class="metric">
+                <label>Confidence</label>
+                <strong style="color: var(--warning);">67%</strong>
+              </div>
+              <div class="metric">
+                <label>Similarity</label>
+                <strong style="color: var(--warning);">0.561</strong>
+              </div>
+              <div class="metric">
+                <label>Liveness</label>
+                <strong style="color: var(--success);">passed</strong>
+              </div>
+            </div>
+
+            <div class="chip-row">
+              <span>Нужна проверка пользователем</span>
+              <span>Эталон не подтверждён однозначно</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin: 0;">Event timeline</h3>
+            <p>Журнал помогает объяснить логику решения простым и понятным языком.</p>
+            <ul class="timeline">
+              <li>Карта приложена. Банкомат готовит биометрическую проверку.</li>
+              <li>Камера получает кадр и запускает проверку живого присутствия.</li>
+              <li>Match score пограничный, но liveness подтверждён.</li>
+              <li>Система выбирает жёлтый сценарий и запрашивает подтверждение владельца.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Decision logic в понятном виде</h2>
+            <p class="section-copy">
+              Логика должна оставаться читаемой и регулируемой вручную перед демо
+              или пилотом. Никакого чёрного ящика в презентации.
+            </p>
+          </div>
+        </div>
+
+        <div class="decision-grid">
+          <div class="decision-card">
+            <span class="badge success">Green</span>
+            <h3 style="margin-top: 12px;">allow</h3>
+            <ul>
+              <li>совпадение уверенное</li>
+              <li>liveness passed</li>
+              <li>операция продолжается без трения</li>
+            </ul>
+          </div>
+
+          <div class="decision-card">
+            <span class="badge review">Yellow</span>
+            <h3 style="margin-top: 12px;">ask_confirmation</h3>
+            <ul>
+              <li>score пограничный или кадр спорный</li>
+              <li>нужен step-up сценарий</li>
+              <li>владелец подтверждает операцию</li>
+            </ul>
+          </div>
+
+          <div class="decision-card">
+            <span class="badge alert">Red</span>
+            <h3 style="margin-top: 12px;">delay_and_alert</h3>
+            <ul>
+              <li>match низкий или liveness провален</li>
+              <li>подозрение на spoof / replay</li>
+              <li>банкомат задерживает операцию</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          Файл можно просто открыть локально и отправить команде как визуальную
+          сводку текущего demo-продукта. Если нужно, следующим шагом можно сделать
+          ещё и вторую версию: более “менеджерскую” или более “техническую”.
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

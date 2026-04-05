@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VTB FaceGuard · Product & Architecture Explainer</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f8fbff;
+        --surface-strong: #eef4ff;
+        --text: #10203a;
+        --muted: #617288;
+        --line: #d9e2ef;
+        --primary: #2563ff;
+        --primary-strong: #0b1f54;
+        --success: #169b62;
+        --warning: #c68615;
+        --danger: #d44949;
+        --navy: #0c1730;
+        --shadow: 0 20px 50px rgba(16, 32, 58, 0.08);
+        --radius: 28px;
+        --radius-sm: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top right, rgba(37, 99, 255, 0.08), transparent 24%),
+          linear-gradient(180deg, #fbfdff 0%, var(--bg) 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(1240px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 24px 0 72px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 12px;
+        z-index: 20;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 12px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(217, 226, 239, 0.9);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(16, 32, 58, 0.06);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        color: var(--primary-strong);
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        background: linear-gradient(135deg, #0d2a76, #2563ff);
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .nav a {
+        padding: 9px 12px;
+        border-radius: 999px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .nav a:hover {
+        background: var(--surface-strong);
+        color: var(--primary-strong);
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px;
+        border-radius: 34px;
+        background:
+          linear-gradient(135deg, #03173f 0%, #0b43d1 58%, #3478ff 100%);
+        color: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .hero::before,
+      .hero::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hero::before {
+        width: 280px;
+        height: 280px;
+        top: -120px;
+        right: -110px;
+      }
+
+      .hero::after {
+        width: 220px;
+        height: 220px;
+        left: -80px;
+        bottom: -100px;
+      }
+
+      .eyebrow,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .eyebrow {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .hero-grid {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 24px;
+        align-items: end;
+      }
+
+      .hero h1 {
+        max-width: 760px;
+        margin: 18px 0 12px;
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1.02;
+      }
+
+      .hero-copy {
+        max-width: 760px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .hero-points {
+        display: grid;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .hero-point,
+      .hero-side-card {
+        padding: 16px 18px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .hero-point strong,
+      .hero-side-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 16px;
+      }
+
+      .hero-side-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .hero-side-card .metric {
+        display: block;
+        margin-top: 6px;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+      .section {
+        margin-top: 22px;
+        padding: 24px;
+        border-radius: var(--radius);
+        border: 1px solid rgba(217, 226, 239, 0.95);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow);
+      }
+
+      .section-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .section h2 {
+        margin: 0;
+        font-size: 30px;
+      }
+
+      .section-copy {
+        max-width: 860px;
+        margin: 6px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .cards {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .card h3,
+      .card h4 {
+        margin: 0;
+      }
+
+      .card p,
+      .card li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .card ul {
+        margin: 10px 0 0;
+        padding-left: 18px;
+      }
+
+      .step-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .step-no {
+        width: 38px;
+        height: 38px;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--surface-strong);
+        color: var(--primary);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .step-card h3 {
+        margin-top: 14px;
+        font-size: 19px;
+      }
+
+      .badge {
+        border: 1px solid transparent;
+      }
+
+      .badge.info {
+        color: var(--primary);
+        background: rgba(37, 99, 255, 0.08);
+        border-color: rgba(37, 99, 255, 0.16);
+      }
+
+      .badge.success {
+        color: var(--success);
+        background: rgba(22, 155, 98, 0.1);
+        border-color: rgba(22, 155, 98, 0.16);
+      }
+
+      .badge.warning {
+        color: var(--warning);
+        background: rgba(198, 134, 21, 0.1);
+        border-color: rgba(198, 134, 21, 0.18);
+      }
+
+      .badge.danger {
+        color: var(--danger);
+        background: rgba(212, 73, 73, 0.1);
+        border-color: rgba(212, 73, 73, 0.16);
+      }
+
+      .decision-card.success {
+        background: linear-gradient(180deg, #fff 0%, #f3fff9 100%);
+      }
+
+      .decision-card.warning {
+        background: linear-gradient(180deg, #fff 0%, #fff9ef 100%);
+      }
+
+      .decision-card.danger {
+        background: linear-gradient(180deg, #fff 0%, #fff4f4 100%);
+      }
+
+      .formula {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: #0e1830;
+        color: #fff;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        line-height: 1.7;
+        overflow-x: auto;
+      }
+
+      .architecture {
+        display: grid;
+        grid-template-columns: 1.05fr 0.9fr 1.05fr;
+        gap: 14px;
+        align-items: start;
+      }
+
+      .lane {
+        display: grid;
+        gap: 12px;
+      }
+
+      .lane-title {
+        margin-bottom: 2px;
+        color: var(--primary-strong);
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .node {
+        position: relative;
+        padding: 16px;
+        border-radius: 18px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .node h4 {
+        margin: 0 0 6px;
+        font-size: 17px;
+      }
+
+      .node p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .connector {
+        display: grid;
+        gap: 12px;
+        align-content: center;
+        justify-items: center;
+        padding-top: 60px;
+      }
+
+      .connector svg {
+        width: 100%;
+        max-width: 160px;
+        height: 64px;
+      }
+
+      .stack-box {
+        display: grid;
+        gap: 12px;
+      }
+
+      .stack-group {
+        padding: 16px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+      }
+
+      .stack-group h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid var(--line);
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .pipeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .pipeline-row {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .pipeline-label {
+        padding: 16px;
+        border-radius: 18px;
+        background: #0e1830;
+        color: #fff;
+      }
+
+      .pipeline-label h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      .pipeline-track {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .pipeline-step {
+        min-height: 132px;
+        padding: 16px;
+        border-radius: 18px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .pipeline-step strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .limitations,
+      .evolution {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .footer-note {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px dashed rgba(37, 99, 255, 0.24);
+        color: #334155;
+      }
+
+      @media (max-width: 1080px) {
+        .hero-grid,
+        .architecture,
+        .grid-4,
+        .grid-3,
+        .grid-2,
+        .limitations,
+        .evolution,
+        .pipeline-track {
+          grid-template-columns: 1fr;
+        }
+
+        .connector {
+          display: none;
+        }
+
+        .pipeline-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .page {
+          width: min(100vw - 20px, 1240px);
+          padding-top: 14px;
+        }
+
+        .hero,
+        .section {
+          padding: 20px;
+        }
+
+        .topbar {
+          top: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z"></path>
+              <path d="M9 12l2 2 4-4"></path>
+            </svg>
+          </div>
+          <div>VTB FaceGuard · explainability page</div>
+        </div>
+        <nav class="nav">
+          <a href="#flow">Flow</a>
+          <a href="#models">Models</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#stack">Stack</a>
+          <a href="#pipeline">Pipeline</a>
+          <a href="#limitations">MVP limits</a>
+        </nav>
+      </div>
+
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow">banking demo · product + tech explainer</span>
+            <h1>VTB FaceGuard</h1>
+            <p class="hero-copy">
+              Демонстрационный сервис дополнительной защиты карты: клиент добровольно
+              подключает биометрическую проверку, сохраняет эталонное фото, а затем
+              при снятии наличных система сопоставляет лицо у банкомата с эталоном,
+              проверяет liveness и выбирает понятный продуктовый сценарий.
+            </p>
+
+            <div class="hero-points">
+              <div class="hero-point">
+                <strong>Снижает риск снятия наличных по украденной карте</strong>
+                Добавляет второй фактор проверки именно в момент самой чувствительной операции.
+              </div>
+              <div class="hero-point">
+                <strong>Объяснимое поведение системы</strong>
+                Вместо «чёрного ящика» продукт показывает понятные шаги: detection, liveness, verification, decision.
+              </div>
+              <div class="hero-point">
+                <strong>Подходит для demo и пилотной эволюции</strong>
+                MVP уже демонстрирует core-механику и при этом оставляет ясный путь к более зрелой версии.
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-side-stack">
+            <div class="hero-side-card">
+              <span class="badge success">Core decision</span>
+              <span class="metric">allow / ask_confirmation / delay_and_alert</span>
+              Решение опирается на match score, liveness signal и читаемые product thresholds.
+            </div>
+            <div class="hero-side-card">
+              <span class="badge info">MVP approach</span>
+              <span class="metric">FastAPI + React + facenet-pytorch</span>
+              Локальный CPU-friendly пайплайн без сложной инфраструктуры и без тяжёлых внешних зависимостей.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="flow" class="section">
+        <div class="section-header">
+          <div>
+            <h2>Core feature flow</h2>
+            <p class="section-copy">
+              Сквозной продуктовый сценарий от подключения защиты до решения банкомата.
+              Здесь важно не только распознавание лица, но и понятная оркестрация шагов.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="card step-card">
+            <div class="step-no">01</div>
+            <h3>Подключение защиты</h3>
+            <p>В интерфейсе, похожем на ВТБ Онлайн, клиент включает дополнительную защиту снятия наличных.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">02</div>
+            <h3>Загрузка эталонного фото</h3>
+            <p>Клиент загружает фото лица. Backend строит embedding и сохраняет связку фото + вектор профиля.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">03</div>
+            <h3>Симуляция банкомата</h3>
+            <p>На ATM-экране камера ноутбука играет роль камеры банкомата. Пользователь «прикладывает карту» и запускает проверку.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">04</div>
+            <h3>Получение кадра</h3>
+            <p>Frontend получает текущий frame или fallback image и отправляет его на backend вместе с profile_id.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">05</div>
+            <h3>Face detection</h3>
+            <p>Из кадра выделяется лицо. Если лицо не найдено или в кадре несколько лиц, система сразу возвращает понятный reason.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">06</div>
+            <h3>Liveness detection</h3>
+            <p>Challenge-response слой просит повернуть голову и оценивает изменение геометрии landmarks между кадрами.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">07</div>
+            <h3>Face verification</h3>
+            <p>Embedding текущего лица сравнивается с эталонным embedding профиля через cosine similarity.</p>
+          </div>
+          <div class="card step-card">
+            <div class="step-no">08</div>
+            <h3>Decision engine</h3>
+            <p>Match score, liveness status и специальные флаги превращаются в продуктовый итог: allow, ask_confirmation или delay_and_alert.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="models" class="section">
+        <div class="section-header">
+          <div>
+            <h2>Models and algorithms</h2>
+            <p class="section-copy">
+              MVP построен на понятных и объяснимых CV-подходах. Цель здесь не «магия AI»,
+              а инженерно стабильная демонстрация product logic.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <span class="badge info">Face detection</span>
+            <h3 style="margin-top: 12px;">MTCNN</h3>
+            <p>
+              Используется для поиска лица на изображении и получения facial landmarks.
+              Это даёт базовый quality gate: нет лица, несколько лиц, неудачный кадр.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="badge info">Face embedding</span>
+            <h3 style="margin-top: 12px;">InceptionResnetV1</h3>
+            <p>
+              Из cropped face строится embedding-вектор. Именно он используется как
+              компактное представление лица для сравнения с эталоном.
+            </p>
+          </div>
+
+          <div class="card">
+            <span class="badge warning">Liveness MVP</span>
+            <h3 style="margin-top: 12px;">Challenge-response + landmarks</h3>
+            <p>
+              Система просит слегка повернуть голову и оценивает, изменяется ли
+              геометрия лица естественным образом, а не просто сдвигается картинка.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 16px;">
+          <div class="card">
+            <h3>Как работает face verification</h3>
+            <p>
+              Эталонное фото пользователя и текущий кадр преобразуются в embeddings.
+              Затем считается cosine similarity: чем ближе векторы, тем выше вероятность,
+              что перед камерой тот же человек.
+            </p>
+            <div class="formula">
+similarity = cosine(embedding_current, embedding_reference)
+
+if similarity >= MATCH_ALLOW:
+  decision_candidate = "allow"
+elif similarity >= MATCH_REVIEW:
+  decision_candidate = "ask_confirmation"
+else:
+  decision_candidate = "delay_and_alert"
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Как формируется confidence</h3>
+            <p>
+              В MVP confidence не претендует на строгую статистическую вероятность.
+              Это нормализованная presentation metric, которая помогает на экране
+              показать итог проверки в удобной для пользователя форме.
+            </p>
+            <div class="formula">
+raw similarity -> threshold bands -> normalized confidence
+
+below review threshold    -> low confidence
+between review and allow  -> medium confidence
+above allow threshold     -> high confidence
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 16px;">
+          <div class="card">
+            <h3>Почему такой подход выбран для MVP</h3>
+            <ul>
+              <li>подходит для локального demo без тяжёлой инфраструктуры</li>
+              <li>работает на CPU и не требует отдельного GPU-контура</li>
+              <li>объясним на защите: detection → embedding → similarity → decision</li>
+              <li>позволяет вручную крутить thresholds перед demo</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Как работает liveness в текущем MVP</h3>
+            <ul>
+              <li>берутся два кадра: базовый и challenge frame</li>
+              <li>сравниваются landmarks лица и сдвиг bounding box</li>
+              <li>простое движение телефона не считается хорошим сигналом</li>
+              <li>при провале возможен мягкий retry до финального red scenario</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section">
+        <div class="section-header">
+          <div>
+            <h2>Technical architecture</h2>
+            <p class="section-copy">
+              Архитектура намеренно компактная: frontend orchestration, backend API,
+              ML-layer, локальное storage и product-facing decision layer.
+            </p>
+          </div>
+        </div>
+
+        <div class="architecture">
+          <div class="lane">
+            <div class="lane-title">Client side</div>
+            <div class="node">
+              <h4>VTB-style frontend</h4>
+              <p>React/Vite интерфейс имитирует mobile-bank flow: dashboard, protection setup, ATM demo page.</p>
+            </div>
+            <div class="node">
+              <h4>Camera input</h4>
+              <p>Используется live camera stream или fallback image. Frontend собирает кадр и вызывает backend endpoint.</p>
+            </div>
+            <div class="node">
+              <h4>Decision rendering</h4>
+              <p>На ATM page отображаются status panel, confirmation flow, event timeline и решение системы.</p>
+            </div>
+          </div>
+
+          <div class="connector">
+            <svg viewBox="0 0 160 64" fill="none">
+              <path d="M8 32H152" stroke="#2563ff" stroke-width="2.5" stroke-dasharray="6 6"></path>
+              <path d="M140 20l12 12-12 12" stroke="#2563ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <svg viewBox="0 0 160 64" fill="none">
+              <path d="M152 32H8" stroke="#0b1f54" stroke-width="2.5" stroke-dasharray="6 6"></path>
+              <path d="M20 20L8 32l12 12" stroke="#0b1f54" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+
+          <div class="lane">
+            <div class="lane-title">Backend + ML side</div>
+            <div class="node">
+              <h4>FastAPI API layer</h4>
+              <p>Endpoints для enroll и ATM check. Принимают файлы, profile_id и возвращают человекочитаемый decision payload.</p>
+            </div>
+            <div class="node">
+              <h4>Face engine</h4>
+              <p>MTCNN детектирует лицо и landmarks, InceptionResnetV1 строит embedding, cosine similarity оценивает совпадение.</p>
+            </div>
+            <div class="node">
+              <h4>Liveness service</h4>
+              <p>Challenge-response слой сравнивает landmarks между кадрами и выдаёт liveness score/status.</p>
+            </div>
+            <div class="node">
+              <h4>Decision engine</h4>
+              <p>Один явный модуль объединяет similarity, liveness и flags в green/yellow/red product scenarios.</p>
+            </div>
+            <div class="node">
+              <h4>Storage</h4>
+              <p>Локальное JSON storage хранит профили, пути к фото и эталонные embeddings для demo/MVP режима.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          Архитектурно решение специально сделано «плоским» и читаемым: это упрощает
+          защиту проекта, ручную калибровку и дальнейший переход от demo к пилоту.
+        </div>
+      </section>
+
+      <section id="stack" class="section">
+        <div class="section-header">
+          <div>
+            <h2>Stack and tools</h2>
+            <p class="section-copy">
+              Набор технологий выбран не ради «модности», а ради быстрой сборки,
+              локального запуска и понятной техничной демонстрации.
+            </p>
+          </div>
+        </div>
+
+        <div class="stack-box">
+          <div class="stack-group">
+            <h3>Frontend stack</h3>
+            <div class="chips">
+              <span class="chip">React</span>
+              <span class="chip">TypeScript</span>
+              <span class="chip">Vite</span>
+              <span class="chip">Tailwind CSS</span>
+              <span class="chip">React Router</span>
+              <span class="chip">Lucide icons</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <h3>Backend stack</h3>
+            <div class="chips">
+              <span class="chip">Python</span>
+              <span class="chip">FastAPI</span>
+              <span class="chip">Uvicorn</span>
+              <span class="chip">Pydantic Settings</span>
+              <span class="chip">Multipart file upload</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <h3>CV / ML libraries</h3>
+            <div class="chips">
+              <span class="chip">PyTorch</span>
+              <span class="chip">facenet-pytorch</span>
+              <span class="chip">MTCNN</span>
+              <span class="chip">InceptionResnetV1</span>
+              <span class="chip">NumPy</span>
+              <span class="chip">Pillow</span>
+            </div>
+          </div>
+
+          <div class="stack-group">
+            <h3>Demo and local tooling</h3>
+            <div class="chips">
+              <span class="chip">Local JSON storage</span>
+              <span class="chip">Camera fallback image</span>
+              <span class="chip">OBS Virtual Camera (optional)</span>
+              <span class="chip">Manual threshold tuning</span>
+              <span class="chip">Static HTML explainers</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pipeline" class="section">
+        <div class="section-header">
+          <div>
+            <h2>End-to-end pipeline</h2>
+            <p class="section-copy">
+              Ниже показан полный data flow: от загрузки фото до финального решения на ATM-экране.
+            </p>
+          </div>
+        </div>
+
+        <div class="pipeline">
+          <div class="pipeline-row">
+            <div class="pipeline-label">
+              <h3>Enroll flow</h3>
+              Этап подключения защиты и создания эталонного профиля.
+            </div>
+            <div class="pipeline-track">
+              <div class="pipeline-step">
+                <strong>1. Upload</strong>
+                Клиент загружает фото в интерфейсе защиты.
+              </div>
+              <div class="pipeline-step">
+                <strong>2. Detection</strong>
+                Backend ищет лицо и валидирует кадр.
+              </div>
+              <div class="pipeline-step">
+                <strong>3. Embedding</strong>
+                Из лица извлекается эталонный вектор.
+              </div>
+              <div class="pipeline-step">
+                <strong>4. Storage</strong>
+                Фото, profile_id и embedding сохраняются в локальном storage.
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-row">
+            <div class="pipeline-label">
+              <h3>Verification flow</h3>
+              Проверка личности в ATM-сценарии.
+            </div>
+            <div class="pipeline-track">
+              <div class="pipeline-step">
+                <strong>1. Card action</strong>
+                Пользователь нажимает «Приложить карту».
+              </div>
+              <div class="pipeline-step">
+                <strong>2. Camera capture</strong>
+                Frontend собирает frame и challenge frame.
+              </div>
+              <div class="pipeline-step">
+                <strong>3. Backend check</strong>
+                `/api/atm/check` получает кадры и profile_id.
+              </div>
+              <div class="pipeline-step">
+                <strong>4. Result payload</strong>
+                API возвращает scores, status, decision, flags и event log.
+              </div>
+            </div>
+          </div>
+
+          <div class="pipeline-row">
+            <div class="pipeline-label">
+              <h3>Scoring + decision</h3>
+              Как технические сигналы превращаются в продуктовый outcome.
+            </div>
+            <div class="pipeline-track">
+              <div class="pipeline-step">
+                <strong>Match score</strong>
+                Cosine similarity между current face и reference face.
+              </div>
+              <div class="pipeline-step">
+                <strong>Liveness score</strong>
+                Signal по challenge-response и landmarks dynamics.
+              </div>
+              <div class="pipeline-step">
+                <strong>Decision engine</strong>
+                Thresholds + rules + quality flags.
+              </div>
+              <div class="pipeline-step">
+                <strong>UI rendering</strong>
+                allow / ask_confirmation / delay_and_alert.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Decision outcomes</h2>
+            <p class="section-copy">
+              Продуктовые сценарии intentionally сведены к трём, чтобы их легко было
+              объяснить и показать как банковую логику защиты.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card decision-card success">
+            <span class="badge success">Green</span>
+            <h3 style="margin-top: 12px;">allow</h3>
+            <p>Лицо совпало с эталоном, liveness подтверждён, банкомат продолжает операцию без задержек.</p>
+          </div>
+          <div class="card decision-card warning">
+            <span class="badge warning">Yellow</span>
+            <h3 style="margin-top: 12px;">ask_confirmation</h3>
+            <p>Есть частичное несоответствие или спорный score. Система показывает владельцу вопрос «Это вы?».</p>
+          </div>
+          <div class="card decision-card danger">
+            <span class="badge danger">Red</span>
+            <h3 style="margin-top: 12px;">delay_and_alert</h3>
+            <p>Низкий match, провал liveness или подозрение на spoof. Операция задерживается и запускается защитный сценарий.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="limitations" class="section">
+        <div class="section-header">
+          <div>
+            <h2>MVP limitations</h2>
+            <p class="section-copy">
+              Это честный demo/MVP. Некоторые вещи намеренно упрощены, чтобы успеть
+              собрать продуктовую механику и убедительный end-to-end сценарий.
+            </p>
+          </div>
+        </div>
+
+        <div class="limitations">
+          <div class="card">
+            <h3>Что упрощено</h3>
+            <ul>
+              <li>локальное JSON storage вместо production-grade profile store</li>
+              <li>challenge-response liveness вместо полноценной passive anti-spoof модели</li>
+              <li>demo-presets и fallback сценарии для стабильной презентации</li>
+              <li>симуляция ATM поведения без реальной интеграции с железом банкомата</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Какие риски остаются</h3>
+            <ul>
+              <li>качество live demo зависит от камеры, света и угла съёмки</li>
+              <li>liveness MVP ещё чувствителен к условиям и нуждается в калибровке</li>
+              <li>thresholds подобраны для demo и пилота, а не для масштабного production rollout</li>
+              <li>нужны более строгие требования к безопасности, данным и аудиту</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Next evolution</h2>
+            <p class="section-copy">
+              После demo MVP продукт естественно развивается в более зрелую банковую систему защиты.
+            </p>
+          </div>
+        </div>
+
+        <div class="evolution">
+          <div class="card">
+            <h3>Следующий продуктовый слой</h3>
+            <ul>
+              <li>trusted persons / доверенные лица</li>
+              <li>история событий и журнал проверок в приложении</li>
+              <li>push-подтверждение вместо только локального ATM prompt</li>
+              <li>реальные банковские сценарии блокировки, задержки, escalation</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Следующий технический слой</h3>
+            <ul>
+              <li>более сильная anti-spoof модель</li>
+              <li>настоящая интеграция с ATM systems и банковыми сервисами</li>
+              <li>risk scoring с учётом контекста операции</li>
+              <li>production storage, observability, policy engine и управление моделями</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          Эта страница задумана как explainability-артефакт: её можно открыть локально,
+          показать жюри или команде и быстро пройтись по продукту, модели, стеку и архитектуре
+          без запуска самого приложения.
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

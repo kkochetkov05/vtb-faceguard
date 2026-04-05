@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VTB FaceGuard · Оценка команды и человеко-часов</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --surface: #ffffff;
+        --surface-soft: #f8fbff;
+        --text: #10203a;
+        --muted: #62738a;
+        --line: #d8e2ef;
+        --primary: #2563ff;
+        --primary-dark: #0a1d52;
+        --success: #159f63;
+        --warning: #c98917;
+        --danger: #d64c4c;
+        --shadow: 0 16px 40px rgba(16, 32, 58, 0.08);
+        --radius: 24px;
+        --radius-sm: 16px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top right, rgba(37, 99, 255, 0.08), transparent 24%),
+          linear-gradient(180deg, #fbfdff 0%, var(--bg) 100%);
+      }
+
+      .page {
+        width: min(1220px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 64px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 32px;
+        border-radius: 32px;
+        background: linear-gradient(135deg, #03173f 0%, #0b43d1 60%, #3478ff 100%);
+        color: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -90px;
+        right: -90px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .eyebrow,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .eyebrow {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+      }
+
+      h1 {
+        margin: 16px 0 10px;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1.03;
+      }
+
+      .hero p {
+        max-width: 840px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 14px;
+        margin-top: 24px;
+      }
+
+      .hero-card {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .hero-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 24px;
+      }
+
+      .section {
+        margin-top: 22px;
+        padding: 24px;
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(216, 226, 239, 0.95);
+        box-shadow: var(--shadow);
+      }
+
+      .section-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 18px;
+      }
+
+      .section h2 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .section-copy {
+        margin: 6px 0 0;
+        max-width: 820px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .grid-2,
+      .grid-3,
+      .cards {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+      }
+
+      .card p,
+      .card li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .card ul {
+        margin: 10px 0 0;
+        padding-left: 18px;
+      }
+
+      .callout {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px dashed rgba(37, 99, 255, 0.28);
+        color: #334155;
+      }
+
+      .badge {
+        border: 1px solid transparent;
+      }
+
+      .badge.success {
+        background: rgba(21, 159, 99, 0.1);
+        border-color: rgba(21, 159, 99, 0.16);
+        color: var(--success);
+      }
+
+      .badge.warning {
+        background: rgba(201, 137, 23, 0.1);
+        border-color: rgba(201, 137, 23, 0.18);
+        color: var(--warning);
+      }
+
+      .badge.danger {
+        background: rgba(214, 76, 76, 0.1);
+        border-color: rgba(214, 76, 76, 0.16);
+        color: var(--danger);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        text-align: left;
+      }
+
+      th {
+        background: #eef4ff;
+        color: var(--primary-dark);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .totals {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .total-card {
+        padding: 18px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+      }
+
+      .total-card strong {
+        display: block;
+        margin-top: 8px;
+        font-size: 30px;
+        color: var(--primary-dark);
+      }
+
+      .stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .footnote {
+        margin-top: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .grid-2,
+        .grid-3,
+        .totals {
+          grid-template-columns: 1fr;
+        }
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          border-bottom: 1px solid var(--line);
+          padding: 10px 0;
+        }
+
+        td {
+          border: 0;
+          padding: 8px 0;
+        }
+
+        td::before {
+          content: attr(data-label);
+          display: block;
+          margin-bottom: 4px;
+          color: var(--primary-dark);
+          font-size: 12px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <span class="eyebrow">VTB FaceGuard · team & effort estimate</span>
+        <h1>Оценка команды и человеко-часов для пути demo → пилот</h1>
+        <p>
+          Реалистичная прикидка на 12 месяцев для продукта уровня пилота: мобильный
+          flow подключения защиты, backend с decision engine, CV/ML-пайплайн face
+          verification + liveness, тестирование и базовая эксплуатационная готовность.
+        </p>
+
+        <div class="hero-grid">
+          <div class="hero-card">
+            <span class="badge success">Оценка</span>
+            <strong>15k–22k ч</strong>
+            Диапазон для минимально реалистичной и оптимальной команды.
+          </div>
+          <div class="hero-card">
+            <span class="badge warning">Горизонт</span>
+            <strong>12 месяцев</strong>
+            С учётом аналитики, разработки, QA, UAT, стабилизации и пилота.
+          </div>
+          <div class="hero-card">
+            <span class="badge danger">Риск</span>
+            <strong>CV/ML + QA</strong>
+            Самые вероятные узкие места: liveness, реальные данные и регресс.
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Допущения</h2>
+            <p class="section-copy">
+              Это грубая оценка, не контрактный план. Она опирается на ограниченный
+              пилотный контур, а не на полный enterprise rollout по всему банку.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>Продуктовый масштаб</h3>
+            <ul>
+              <li>10–20 ключевых экранов и состояний клиентского интерфейса</li>
+              <li>ATM-сценарий с тремя продуктовыми исходами</li>
+              <li>не суперапп и не full-scale ATM core replacement</li>
+              <li>основной фокус на пилот, а не на всю сеть банкоматов</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Качество и интеграции</h3>
+            <ul>
+              <li>production-пилотный уровень, а не учебный MVP</li>
+              <li>1–3 реальные или приближённые к реальным интеграции</li>
+              <li>secure coding, логирование, мониторинг, CI/CD</li>
+              <li>без полного контура enterprise-сертификации</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top: 16px;">
+          Больше всего на оценку влияют четыре вещи: глубина реальных интеграций,
+          качество датасета для CV/ML, требования к liveness и объём ручного UAT.
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Роли и команда</h2>
+            <p class="section-copy">
+              Состав без перегруза людей, но и без лишних ролей. Подразумевается,
+              что core-команда работает весь год, а аналитика, дизайн и infra идут
+              частичной загрузкой.
+            </p>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Роль</th>
+              <th>Уровень</th>
+              <th>Загрузка</th>
+              <th>Зачем нужна</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Роль">Tech Lead / Solution Architect</td>
+              <td data-label="Уровень">Senior</td>
+              <td data-label="Загрузка">0.75–1.0 FTE</td>
+              <td data-label="Зачем нужна">Архитектура, синхронизация backend/frontend/ML, технические решения, контроль качества.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Backend Engineer</td>
+              <td data-label="Уровень">Middle/Senior</td>
+              <td data-label="Загрузка">1.0–2.0 FTE</td>
+              <td data-label="Зачем нужна">API, бизнес-логика, decision engine, интеграции, журналы, безопасность.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Frontend / Mobile Engineer</td>
+              <td data-label="Уровень">Middle/Senior</td>
+              <td data-label="Загрузка">1.0–1.5 FTE</td>
+              <td data-label="Зачем нужна">Клиентский интерфейс, flow подключения защиты, ATM UI, интеграция с backend.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">ML/CV Engineer</td>
+              <td data-label="Уровень">Senior</td>
+              <td data-label="Загрузка">1.0–1.5 FTE</td>
+              <td data-label="Зачем нужна">Face verification, liveness, оценка качества, пороги, error mode analysis.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">QA Engineer</td>
+              <td data-label="Уровень">Middle</td>
+              <td data-label="Загрузка">1.0–1.5 FTE</td>
+              <td data-label="Зачем нужна">Ручной регресс, тест-планы, интеграционное тестирование, UAT support.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Product Manager</td>
+              <td data-label="Уровень">Middle/Senior</td>
+              <td data-label="Загрузка">0.5–1.0 FTE</td>
+              <td data-label="Зачем нужна">Backlog, приоритеты, acceptance criteria, контроль scope пилота.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">UX/UI Designer</td>
+              <td data-label="Уровень">Middle/Senior</td>
+              <td data-label="Загрузка">0.3–0.6 FTE</td>
+              <td data-label="Зачем нужна">Flow, UX states, дизайн-система, полировка интерфейса под пилот и demo.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">DevOps / Platform</td>
+              <td data-label="Уровень">Middle/Senior</td>
+              <td data-label="Загрузка">0.3–0.6 FTE</td>
+              <td data-label="Зачем нужна">CI/CD, окружения, мониторинг, логирование, релизный контур.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Analyst / BA</td>
+              <td data-label="Уровень">Middle</td>
+              <td data-label="Загрузка">0.3–0.5 FTE</td>
+              <td data-label="Зачем нужна">Требования, edge cases, интеграционные спецификации, UAT-сценарии.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Data / MLOps</td>
+              <td data-label="Уровень">Middle</td>
+              <td data-label="Загрузка">0.2–0.5 FTE</td>
+              <td data-label="Зачем нужна">Датасеты, версионирование моделей, инференс-пайплайн, evaluation support.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Человеко-часы по ролям</h2>
+            <p class="section-copy">
+              База расчёта: 1 FTE за 12 месяцев ≈ 1920 часов. Диапазоны даны
+              намеренно, потому что точнее на этом этапе притворяться не стоит.
+            </p>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Роль</th>
+              <th>FTE</th>
+              <th>Часы за 12 мес</th>
+              <th>Основные задачи</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Роль">Tech Lead / Architect</td>
+              <td data-label="FTE">0.75–1.0</td>
+              <td data-label="Часы за 12 мес">1440–1920</td>
+              <td data-label="Основные задачи">Архитектура, техрешения, ревью, управление рисками, координация потоков.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Backend Engineer(s)</td>
+              <td data-label="FTE">1.5–2.0</td>
+              <td data-label="Часы за 12 мес">2880–3840</td>
+              <td data-label="Основные задачи">API, decision engine, события, интеграции, бизнес-логика, защита данных.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Frontend / Mobile Engineer(s)</td>
+              <td data-label="FTE">1.0–1.5</td>
+              <td data-label="Часы за 12 мес">1920–2880</td>
+              <td data-label="Основные задачи">UI клиента, flow настройки, ATM экран, состояния, интеграция с backend.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">ML/CV Engineer(s)</td>
+              <td data-label="FTE">1.0–1.5</td>
+              <td data-label="Часы за 12 мес">1920–2880</td>
+              <td data-label="Основные задачи">Face verification, liveness, калибровка, evaluation, устойчивость под реальные условия.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">QA Engineer(s)</td>
+              <td data-label="FTE">1.0–1.5</td>
+              <td data-label="Часы за 12 мес">1920–2880</td>
+              <td data-label="Основные задачи">Тест-планы, ручной регресс, интеграционное тестирование, UAT и стабилизация.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Product Manager</td>
+              <td data-label="FTE">0.5–1.0</td>
+              <td data-label="Часы за 12 мес">960–1920</td>
+              <td data-label="Основные задачи">Приоритеты, scope, acceptance criteria, синхронизация со стейкхолдерами.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">UX/UI Designer</td>
+              <td data-label="FTE">0.3–0.6</td>
+              <td data-label="Часы за 12 мес">576–1152</td>
+              <td data-label="Основные задачи">Flow, прототипы, визуальная цельность, UX edge states.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">DevOps / Platform</td>
+              <td data-label="FTE">0.3–0.6</td>
+              <td data-label="Часы за 12 мес">576–1152</td>
+              <td data-label="Основные задачи">CI/CD, мониторинг, окружения, алерты, деплой.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Analyst / BA</td>
+              <td data-label="FTE">0.3–0.5</td>
+              <td data-label="Часы за 12 мес">576–960</td>
+              <td data-label="Основные задачи">Формализация сценариев, требования, integration contracts, UAT cases.</td>
+            </tr>
+            <tr>
+              <td data-label="Роль">Data / MLOps</td>
+              <td data-label="FTE">0.2–0.5</td>
+              <td data-label="Часы за 12 мес">384–960</td>
+              <td data-label="Основные задачи">Данные, артефакты моделей, packaging инференса, support evaluation.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="totals">
+          <div class="total-card">
+            <div class="muted">Минимально реалистично</div>
+            <strong>15k–17k ч</strong>
+            Для сжатой, но жизнеспособной команды без большого запаса.
+          </div>
+          <div class="total-card">
+            <div class="muted">Оптимально</div>
+            <strong>18k–22k ч</strong>
+            Лучший баланс скорости, качества и риска.
+          </div>
+          <div class="total-card">
+            <div class="muted">С запасом</div>
+            <strong>22k–26k ч</strong>
+            Если нужны ускорение, параллельные потоки и меньше риск по срокам.
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Разбивка по блокам работ</h2>
+            <p class="section-copy">
+              Это удобнее для обсуждения бюджета и реального плана, чем смотреть только на роли.
+            </p>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Блок</th>
+              <th>Часы</th>
+              <th>Кто в основном участвует</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Блок">Продукт и аналитика</td>
+              <td data-label="Часы">1400–2600</td>
+              <td data-label="Кто в основном участвует">PM, Analyst, Tech Lead</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">UX/UI дизайн</td>
+              <td data-label="Часы">700–1500</td>
+              <td data-label="Кто в основном участвует">Designer, PM, Frontend Lead</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">Backend</td>
+              <td data-label="Часы">3200–5000</td>
+              <td data-label="Кто в основном участвует">Backend, Tech Lead, Analyst</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">Frontend / mobile</td>
+              <td data-label="Часы">2400–4200</td>
+              <td data-label="Кто в основном участвует">Frontend/Mobile, Designer, QA</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">CV/ML</td>
+              <td data-label="Часы">2600–4800</td>
+              <td data-label="Кто в основном участвует">ML/CV, Data/MLOps, Tech Lead</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">QA и тестирование</td>
+              <td data-label="Часы">2200–4200</td>
+              <td data-label="Кто в основном участвует">QA, Backend, Frontend, ML</td>
+            </tr>
+            <tr>
+              <td data-label="Блок">DevOps / infra</td>
+              <td data-label="Часы">900–1800</td>
+              <td data-label="Кто в основном участвует">DevOps, Tech Lead, Data/MLOps</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Варианты конфигурации команды</h2>
+            <p class="section-copy">
+              Три рабочих варианта: минимальный, оптимальный и ускоренный. Отличаются не только стоимостью, но и запасом на сюрпризы.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <span class="badge warning">Минимальная</span>
+            <h3 style="margin-top: 12px;">Успеваем к концу 12 месяцев</h3>
+            <p>Около 6.9 FTE и 15k–17k часов.</p>
+            <ul>
+              <li>Tech Lead 0.8</li>
+              <li>Backend 1.5</li>
+              <li>Frontend 1.0</li>
+              <li>ML/CV 1.0</li>
+              <li>QA 1.0</li>
+              <li>остальные роли part-time</li>
+            </ul>
+            <p><strong>Риск:</strong> почти нет запаса, CV/ML и QA легко становятся bottleneck.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge success">Оптимальная</span>
+            <h3 style="margin-top: 12px;">Лучший баланс</h3>
+            <p>Около 10.2 FTE и 19.5k–23.5k часов.</p>
+            <ul>
+              <li>Tech Lead 1.0</li>
+              <li>Backend 2.0</li>
+              <li>Frontend 1.5</li>
+              <li>ML/CV 1.5</li>
+              <li>QA 1.5</li>
+              <li>PM / Design / DevOps / BA / Data part-time</li>
+            </ul>
+            <p><strong>Плюс:</strong> хватает ресурса на параллельные потоки и стабилизацию перед пилотом.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge danger">Ускоренная</span>
+            <h3 style="margin-top: 12px;">Цель 6–9 месяцев</h3>
+            <p>Около 13–14.5 FTE и 24k–30k часов.</p>
+            <ul>
+              <li>Backend 2.5–3.0</li>
+              <li>Frontend 2.0</li>
+              <li>ML/CV 2.0</li>
+              <li>QA 2.0</li>
+              <li>усиленные PM / Design / DevOps / BA</li>
+            </ul>
+            <p><strong>Минус:</strong> выше стоимость и координационная сложность, нужен сильный lead.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2>Ключевые выводы</h2>
+            <p class="section-copy">
+              Если смотреть глазами тимлида, основная сложность проекта не в UI, а в устойчивости проверки личности под реальные условия и в объёме тестирования.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <h3>Главное узкое место</h3>
+            <p>
+              CV/ML и liveness: модель недостаточно просто “запустить”, её надо
+              стабилизировать под свет, камеры, ложные срабатывания и реальные данные.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Второе узкое место</h3>
+            <p>
+              QA и UAT: именно здесь всплывают сценарии с edge cases, интеграционные
+              проблемы и “неправильные” реальные пользовательские паттерны.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Практический вывод</h3>
+            <p>
+              Для 12 месяцев разумнее целиться в оптимальную конфигурацию, а не в
+              минимальную. Минимальная команда дотащит, но почти без запаса на сюрпризы.
+            </p>
+          </div>
+        </div>
+
+        <p class="footnote">
+          Файл можно открыть локально и отправить команде как визуально оформленную сводку оценки.
+          При необходимости можно сделать вторую версию: короткую “для менеджмента” или расширенную “для бюджета и staffing plan”.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

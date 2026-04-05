@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vtb-bg text-vtb-text antialiased;
+    font-feature-settings: "ss01", "ss02";
+  }
+}
+
+@layer components {
+  /* ===== Кнопки ===== */
+  .vtb-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-vtb-sm
+           px-6 py-3 text-sm font-semibold transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-vtb-primary/30 focus:ring-offset-2
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .vtb-btn-primary {
+    @apply vtb-btn bg-vtb-primary text-white hover:bg-[#0055DD] active:bg-[#004ABB];
+  }
+
+  .vtb-btn-secondary {
+    @apply vtb-btn bg-vtb-light text-vtb-primary hover:bg-[#D6E4FF] active:bg-[#C2D6FF];
+  }
+
+  .vtb-btn-outline {
+    @apply vtb-btn border border-vtb-border bg-white text-vtb-text
+           hover:bg-vtb-bg active:bg-vtb-border/50;
+  }
+
+  .vtb-btn-danger {
+    @apply vtb-btn bg-vtb-danger text-white hover:bg-[#E0342B] active:bg-[#CC2F27];
+  }
+
+  .vtb-btn-ghost {
+    @apply vtb-btn bg-transparent text-vtb-primary hover:bg-vtb-light active:bg-[#D6E4FF];
+  }
+
+  /* ===== Карточка ===== */
+  .vtb-card {
+    @apply rounded-vtb bg-vtb-card p-5 shadow-vtb;
+  }
+
+  /* ===== Навигация sidebar ===== */
+  .vtb-nav-item {
+    @apply flex items-center gap-3 rounded-vtb-sm px-4 py-2.5
+           text-sm font-medium text-vtb-secondary transition-colors
+           hover:bg-vtb-light hover:text-vtb-text;
+  }
+
+  .vtb-nav-item-active {
+    @apply vtb-nav-item bg-vtb-light text-vtb-primary font-semibold;
+  }
+}
