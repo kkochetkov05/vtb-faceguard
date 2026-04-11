@@ -216,7 +216,10 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
           playsInline
           muted
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ display: cameraReady ? "block" : "none" }}
+          style={{
+            display: cameraReady ? "block" : "none",
+            transform: "scaleX(-1)",
+          }}
         />
 
         {cameraReady && (

@@ -446,6 +446,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
               style={{
                 display:
                   cameraReady ? "block" : "none",
+                transform: "scaleX(-1)",
               }}
             />
 
