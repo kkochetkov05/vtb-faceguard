@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="slides-format" content="viewport">
+  <title>VTB FaceGuard — технические слайды</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f5f7fb;
+      --color-bg-deep: #e9eef7;
+      --color-surface: #ffffff;
+      --color-text: #0f172a;
+      --color-text-secondary: #334155;
+      --color-text-muted: #64748b;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #1d4ed8;
+      --color-accent-3: #b45309;
+      --color-glass-bg: rgba(255,255,255,0.86);
+      --color-glass-border: rgba(15,23,42,0.10);
+      --color-vignette: rgba(15,23,42,0.04);
+      --font-display: 'Inter', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f5f7fb; --color-text: #0f172a; --glow-color-rgb: 15,118,110; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { background: var(--color-bg); margin: 0; }
+    body { font-family: 'Inter', sans-serif; color: var(--color-text); overflow: hidden; height: 100vh; width: 100vw; }
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide { position: absolute; inset: 0; background: var(--color-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: scale(0.985); transition: opacity .45s ease, transform .45s ease; pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+    .slide > .content { position: relative; z-index: 2; width: 100%; max-width: 1280px; padding: 28px 42px 76px; }
+    .slide.tight > .content { max-width: 1220px; padding: 22px 32px 68px; }
+    .nav-controls { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); padding: 10px 20px; border-radius: 999px; border: 1px solid rgba(15,23,42,.1); box-shadow: 0 10px 30px rgba(15,23,42,.08); }
+    .nav-btn { width: 38px; height: 38px; border: none; background: #eef2ff; color: #1d4ed8; border-radius: 999px; font-size: 1.15rem; cursor: pointer; }
+    .slide-dots { display: flex; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(15,23,42,.16); cursor: pointer; }
+    .dot.active { background: var(--color-accent-1); transform: scale(1.2); }
+    .slide-counter { font-size: .8rem; color: #64748b; min-width: 44px; text-align: center; }
+    .reveal { opacity: 0; transform: translateY(14px); }
+    .gradient-mesh { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(70px); animation: float 16s ease-in-out infinite; }
+    .blob:nth-child(2){ animation-duration: 22s; }
+    .blob:nth-child(3){ animation-duration: 19s; }
+    @keyframes float { 0%,100%{ transform: translate(0,0) scale(1);} 50%{ transform: translate(20px,-24px) scale(1.08);} }
+    .slide::before { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); opacity:.25; }
+    .slide::after { content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background: radial-gradient(circle at center, transparent 55%, rgba(15,23,42,.04) 100%); }
+    .eyebrow { font: 700 12px/1 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: #0f766e; }
+    .title { font-size: 38px; line-height: 1.04; font-weight: 800; letter-spacing: -.03em; }
+    .slide.tight .title { font-size: 34px; }
+    .subtitle { color: #475569; font-size: 16px; line-height: 1.45; max-width: 900px; }
+    .slide.tight .subtitle { font-size: 15px; line-height: 1.4; max-width: 860px; }
+    .layout-2 { display:grid; grid-template-columns: 1.15fr .85fr; gap: 24px; align-items:start; }
+    .panel { background: rgba(255,255,255,.88); border: 1px solid rgba(15,23,42,.08); border-radius: 22px; box-shadow: 0 14px 34px rgba(15,23,42,.07); }
+    .panel.pad { padding: 20px 22px; }
+    .meta-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+    .meta-card { background:#fff; border:1px solid rgba(15,23,42,.08); border-radius:18px; padding:14px 16px; min-height:96px; }
+    .meta-card h4 { margin:0 0 8px; font-size:13px; line-height:1.2; color:#0f766e; text-transform:uppercase; letter-spacing:.08em; font-family:'JetBrains Mono', monospace; }
+    .meta-card p { margin:0; font-size:14px; line-height:1.4; color:#334155; }
+    .bullets { display:grid; gap:10px; }
+    .bullet { display:flex; gap:10px; align-items:flex-start; font-size:15px; line-height:1.35; color:#334155; }
+    .bullet::before { content:''; flex:0 0 10px; width:10px; height:10px; margin-top:5px; border-radius:999px; background: linear-gradient(135deg, #0f766e, #1d4ed8); }
+    .c4-board { background:#fff; border:1.5px solid #cbd5e1; border-radius:24px; padding:18px; min-height:472px; position:relative; }
+    .c4-board.compact { padding:14px; min-height:430px; }
+    .context-board { min-height: 420px; }
+    .context-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 176px minmax(220px, 1fr) 176px;
+      grid-template-rows: repeat(3, minmax(94px, 1fr));
+      gap: 18px 22px;
+      align-items: stretch;
+      min-height: 388px;
+    }
+    .context-grid .node {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: 100%;
+    }
+    .context-grid .center-node {
+      align-self: stretch;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .context-arrows {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .container-board { min-height: 430px; }
+    .container-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: 110px minmax(126px, 1fr) minmax(126px, 1fr);
+      gap: 14px;
+      align-items: stretch;
+      min-height: 402px;
+    }
+    .container-layout > .node,
+    .boundary-box .node {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: 100%;
+    }
+    .boundary-box {
+      grid-column: 1 / -1;
+      grid-row: 2 / 4;
+      border: 2px solid #bfdbfe;
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+      border-radius: 22px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: auto repeat(2, minmax(104px, 1fr));
+      gap: 12px;
+      align-items: stretch;
+      min-width: 0;
+    }
+    .boundary-title {
+      grid-column: 1 / -1;
+      font: 700 11px/1 'JetBrains Mono', monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #1d4ed8;
+      margin-bottom: 2px;
+    }
+    .boundary-col {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      min-width: 0;
+    }
+    .boundary-col.center {
+      grid-template-rows: repeat(2, minmax(88px, auto));
+    }
+    .side-node {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+      align-self: stretch;
+    }
+    .boundary-box > .node {
+      min-height: 104px;
+    }
+    .container-board .node h3 {
+      font-size: 13px;
+      line-height: 1.12;
+    }
+    .container-board .node p {
+      font-size: 11px;
+      line-height: 1.24;
+    }
+    .c4-label { font:700 11px/1 'JetBrains Mono', monospace; letter-spacing:.08em; text-transform:uppercase; color:#64748b; margin-bottom:12px; }
+    .node { position:absolute; background:#fff; border:2px solid #94a3b8; border-radius:16px; padding:12px 14px; box-shadow:0 8px 20px rgba(15,23,42,.05); }
+    .c4-board.compact .node { padding:10px 12px; border-radius:14px; }
+    .node.person { border-color:#0f766e; background:#f0fdfa; }
+    .node.system { border-color:#1d4ed8; background:#eff6ff; }
+    .node.external { border-color:#b45309; background:#fff7ed; }
+    .node.container { border-color:#1d4ed8; background:#ffffff; }
+    .node.component { border-color:#0f766e; background:#f8fafc; }
+    .node h3 { margin:0 0 4px; font-size:16px; line-height:1.12; }
+    .c4-board.compact .node h3 { font-size:14px; line-height:1.12; }
+    .node .role { font:700 10px/1 'JetBrains Mono', monospace; color:#64748b; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+    .node p { margin:0; font-size:12.5px; line-height:1.34; color:#475569; max-width:230px; }
+    .c4-board.compact .node p { max-width:none; font-size:11.5px; line-height:1.28; }
+    svg.arrows { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    .legend { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .legend span { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:#fff; border:1px solid rgba(15,23,42,.08); font-size:12px; color:#475569; }
+    .legend i { width:10px; height:10px; border-radius:999px; display:inline-block; }
+    .stack-list { display:grid; gap:10px; }
+    .stack-row { display:grid; grid-template-columns: 110px 1fr; gap:14px; align-items:start; padding:10px 12px; border:1px solid rgba(15,23,42,.08); border-radius:14px; background:#fff; }
+    .stack-row .k { font:700 11px/1.3 'JetBrains Mono', monospace; text-transform:uppercase; color:#0f766e; }
+    .stack-row .v { font-size:14px; color:#334155; line-height:1.35; }
+    .runtime { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:12px; }
+    .step { background:#fff; border:1px solid rgba(15,23,42,.08); border-radius:16px; padding:12px; min-height:136px; position:relative; }
+    .step .num { font:700 12px/1 'JetBrains Mono', monospace; color:#1d4ed8; margin-bottom:8px; }
+    .step h4 { margin:0 0 6px; font-size:15px; line-height:1.2; }
+    .step p { margin:0; font-size:13px; line-height:1.35; color:#475569; }
+    .tradeoffs { display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:14px; }
+    .trade { background:#fff; border:1px solid rgba(15,23,42,.08); border-radius:16px; padding:14px; }
+    .trade h4 { margin:0 0 8px; font-size:13px; line-height:1.2; color:#b45309; text-transform:uppercase; letter-spacing:.08em; font-family:'JetBrains Mono', monospace; }
+    .trade ul { margin:0; padding-left:18px; color:#334155; font-size:13.5px; line-height:1.38; }
+    .footer-note { margin-top:10px; font-size:12px; color:#64748b; }
+    @media (max-width: 1100px){ .layout-2{ grid-template-columns:1fr; } .runtime{ grid-template-columns:1fr 1fr; } }
+  </style>
+</head>
+<body>
+<div class="deck">
+  <div class="slide active tight" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;top:-60px;right:-40px;background:#93c5fd;opacity:.18"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-40px;background:#99f6e4;opacity:.18"></div>
+      <div class="blob" style="width:220px;height:220px;left:38%;top:10%;background:#fde68a;opacity:.12"></div>
+    </div>
+    <div class="content">
+      <h1 class="reveal title" style="margin:8px 0 10px;">VTB FaceGuard в окружении ATM-процесса</h1>
+      <p class="reveal subtitle">На уровне контекста видны только границы системы: клиент подключает защиту и загружает эталон через банковый интерфейс, а во время снятия наличных банкомат передаёт кадры на проверку и получает решение.</p>
+      <div class="layout-2" style="margin-top:14px; grid-template-columns: 1.22fr .78fr; gap:20px;">
+        <div class="panel pad reveal">
+          <div class="c4-label">C4 · Контекст системы</div>
+          <div class="c4-board compact context-board">
+            <div class="context-grid">
+            <div class="node person" style="grid-column:1; grid-row:1;">
+              <div class="role">Пользователь</div><h3>Клиент банка</h3><p>Подключает защиту, загружает эталон и проходит проверку у банкомата.</p>
+            </div>
+            <div class="node external" style="grid-column:1; grid-row:3;">
+              <div class="role">Внешняя система</div><h3>ATM / камера</h3><p>Источник кадра и точка выполнения операции снятия наличных.</p>
+            </div>
+            <div class="node system center-node" style="grid-column:2; grid-row:2;">
+              <div class="role">Система</div><h3>VTB FaceGuard</h3><p>Биометрическая и поведенческая проверка ATM-операции: сохранение эталона, face verification, liveness и decision logic.</p>
+            </div>
+            <div class="node external" style="grid-column:3; grid-row:1;">
+              <div class="role">Внешняя система</div><h3>Мобильный / веб-канал</h3><p>Интерфейс подключения защиты и загрузки фото-эталона.</p>
+            </div>
+            <div class="node external" style="grid-column:3; grid-row:2;">
+              <div class="role">Внешняя система</div><h3>ATM UI</h3><p>Отображает результат проверки и дополнительный сценарий подтверждения.</p>
+            </div>
+            <div class="node external" style="grid-column:3; grid-row:3;">
+              <div class="role">Внешняя система</div><h3>Банковые антифрод-системы</h3><p>Целевое развитие: уведомления, риск-сигналы и журнал событий.</p>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel pad reveal">
+          <div class="bullets">
+            <div class="bullet">Ключевая фича представляет собой слой проверки личности в точке выдачи денег.</div>
+            <div class="bullet">В MVP уже есть полный сквозной путь проверки.</div>
+            <div class="bullet">Система стоит между взаимодействием с банкоматом и выдачей денег, поэтому решение должно приниматься быстро.</div>
+            <div class="bullet">Система может расширяться дополнительными антифрод-функциями.</div>
+          </div>
+          <div class="legend">
+            <span><i style="background:#0f766e"></i>Пользователь</span>
+            <span><i style="background:#1d4ed8"></i>Система</span>
+            <span><i style="background:#b45309"></i>Внешняя система</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide tight" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-70px;right:-60px;background:#bfdbfe;opacity:.16"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-30px;background:#a7f3d0;opacity:.16"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal title" style="margin:8px 0 10px;">Контейнерная архитектура и выбранный стек</h2>
+      <p class="reveal subtitle">На уровне контейнеров система раскладывается на frontend-экраны, backend/API, CV/ML-обработку, decision layer и storage. Здесь уже можно честно показать технологии и маршруты данных, не смешивая их с контекстом системы.</p>
+      <div class="layout-2" style="margin-top:14px; grid-template-columns: 1.3fr .7fr; gap:18px;">
+        <div class="panel pad reveal">
+          <div class="c4-label">C4 · Контейнеры</div>
+          <div class="c4-board compact container-board">
+            <div class="container-layout">
+              <div class="node person side-node" style="grid-column: 1; grid-row: 1;">
+                <div class="role">Пользователь</div><h3>Клиент банка</h3><p>Работает с мобильным/веб-каналом и сценарием банкомата.</p>
+              </div>
+
+              <div class="node external side-node" style="grid-column: 2; grid-row: 1;">
+                <div class="role">Внешняя система</div><h3>ATM / камера</h3><p>Физический банкомат или демо-камера ноутбука.</p>
+              </div>
+
+              <div class="boundary-box">
+                <div class="boundary-title">Граница системы · VTB FaceGuard</div>
+                <div class="node container">
+                  <div class="role">Контейнер</div><h3>Frontend</h3><p>React + TypeScript + Vite.</p>
+                </div>
+                <div class="node container">
+                  <div class="role">Контейнер</div><h3>Backend API</h3><p>Python + FastAPI.</p>
+                </div>
+                <div class="node container">
+                  <div class="role">Контейнер</div><h3>Decision Layer</h3><p>Продуктовые правила, пороги и итоговый ответ системы.</p>
+                </div>
+                <div class="node container">
+                  <div class="role">Контейнер</div><h3>CV/ML Layer</h3><p>PyTorch + facenet-pytorch. Face detection, embedding, similarity scoring, liveness.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal" style="display:grid; gap:14px; align-self:stretch;">
+          <div class="panel pad">
+            <div class="c4-label">Стек</div>
+            <div class="stack-list">
+              <div class="stack-row"><div class="k">Frontend</div><div class="v">React 18, TypeScript, Vite, React Router, Tailwind CSS, Lucide React.</div></div>
+              <div class="stack-row"><div class="k">Backend</div><div class="v">Python, FastAPI, Uvicorn, Pydantic Settings, multipart upload.</div></div>
+              <div class="stack-row"><div class="k">CV / ML</div><div class="v">PyTorch, facenet-pytorch, MTCNN, InceptionResnetV1, NumPy, Pillow.</div></div>
+              <div class="stack-row"><div class="k">Демо-инструменты</div><div class="v">Камера браузера, резервная загрузка изображения, детерминированные ATM-пресеты, Swagger UI.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-60px;right:-40px;background:#c7d2fe;opacity:.16"></div>
+      <div class="blob" style="width:250px;height:250px;left:-40px;bottom:-20px;background:#fde68a;opacity:.16"></div>
+      <div class="blob" style="width:180px;height:180px;left:45%;top:5%;background:#99f6e4;opacity:.12"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal title" style="margin:8px 0 10px;">Рабочий пайплайн, ограничения MVP и компромиссы</h2>
+      <div class="panel pad reveal" style="margin-top:18px;">
+        <div class="c4-label">Динамический поток / рабочий пайплайн</div>
+        <div class="runtime">
+          <div class="step"><div class="num">01</div><h4>Подключение и сохранение эталона</h4><p>Клиент включает защиту, загружает фото, backend сохраняет embedding.</p></div>
+          <div class="step"><div class="num">02</div><h4>Старт ATM-сессии</h4><p>Демо-экран запускает проверку и передаёт информацию для проверки score и liveness.</p></div>
+          <div class="step"><div class="num">03</div><h4>CV/ML-слой</h4><p>Распознавание лица → проверка качества и количества лиц → embedding → similarity scoring → liveness по изменению геометрических точек.</p></div>
+          <div class="step"><div class="num">04</div><h4>Решение и действие</h4><p>Decision-слой объединяет все данные, затем возвращает один из трех сценариев в соответствие заранее определенным правилам.</p></div>
+        </div>
+        <div class="tradeoffs">
+          <div class="trade">
+            <h4>Ограничения MVP</h4>
+            <ul>
+              <li>Хранилище локальное.</li>
+              <li>ATM интеграция симулируется frontend-экраном и камерой ноутбука.</li>
+              <li>Liveness — эвристический challenge-response, а не промышленный anti-spoof.</li>
+            </ul>
+          </div>
+          <div class="trade">
+            <h4>Компромиссы и развитие</h4>
+            <ul>
+              <li>Фото используется для сохранения эталона, а ATM-проверка идёт по кадру и короткому 2-frame challenge, что упрощает задержку ответа.</li>
+              <li>Пороги подобраны под объяснимость демо и пилота, а не под финальную банковскую ROC-оптимизацию.</li>
+              <li>Дальше архитектура развивается в сторону video anomaly layer, реальных ATM-событий, risk scoring, аудита и observability.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 3</span>
+</div>
+
+<script>
+let current = 1;
+const total = document.querySelectorAll('.slide').length;
+const dotsContainer = document.getElementById('dots');
+const counter = document.getElementById('counter');
+for (let i = 1; i <= total; i++) { const dot = document.createElement('div'); dot.className = 'dot' + (i === 1 ? ' active' : ''); dot.onclick = () => goToSlide(i); dotsContainer.appendChild(dot); }
+function goToSlide(n) { const prev = document.querySelector('.slide.active'); const next = document.querySelector(`.slide[data-slide="${n}"]`); if (prev) prev.classList.remove('active'); if (next) { next.classList.add('active'); animateSlide(next); } current = n; updateNav(); }
+function changeSlide(dir) { let next = current + dir; if (next < 1) next = total; if (next > total) next = 1; goToSlide(next); }
+function updateNav() { document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i + 1 === current)); counter.textContent = current + ' / ' + total; }
+document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); } });
+let touchStartX = 0; document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }); document.addEventListener('touchend', (e) => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1); });
+function animateSlide(slide) { slide.querySelectorAll('.reveal').forEach((el, i) => { el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(14px)'; el.offsetHeight; const delay = i * 0.05; el.style.transition = `opacity .28s ease ${delay}s, transform .28s ease ${delay}s`; el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }); }
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>
