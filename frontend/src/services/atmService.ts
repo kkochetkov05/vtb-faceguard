@@ -1,3 +1,5 @@
+import { buildApiUrl } from "@/lib/api";
+
 /**
  * ATM Demo — сервис верификации.
  *
@@ -87,7 +89,7 @@ export async function checkFace(
   }
   formData.append("profile_id", profileId);
 
-  const res = await fetch("/api/atm/check", {
+  const res = await fetch(buildApiUrl("/atm/check"), {
     method: "POST",
     body: formData,
   });

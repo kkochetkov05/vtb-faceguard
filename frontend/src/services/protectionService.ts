@@ -1,3 +1,5 @@
+import { buildApiUrl } from "@/lib/api";
+
 /**
  * Service layer для ВТБ Защиты.
  *
@@ -83,7 +85,7 @@ export async function uploadReferencePhoto(
   const form = new FormData();
   form.append("file", file);
 
-  const res = await fetch("/api/enroll", {
+  const res = await fetch(buildApiUrl("/enroll"), {
     method: "POST",
     body: form,
   });
