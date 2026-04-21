@@ -13,15 +13,15 @@ export default function ProtectionDonePage() {
   const { referencePhoto, activatedAt } = useProtection();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Success hero */}
-      <div className="relative overflow-hidden rounded-vtb bg-gradient-to-br from-vtb-success/90 to-emerald-600 p-8 text-white text-center">
+      <div className="relative overflow-hidden rounded-vtb bg-gradient-to-br from-vtb-success/90 to-emerald-600 p-6 text-center text-white sm:p-8">
         <div className="relative z-10 flex flex-col items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/20">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/20 sm:h-20 sm:w-20">
             <ShieldCheck size={40} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Защита подключена</h1>
+            <h1 className="text-xl font-bold sm:text-2xl">Защита подключена</h1>
             <p className="mt-2 text-sm opacity-80">
               Проверка личности для снятия наличных включена.
               <br />
@@ -37,7 +37,7 @@ export default function ProtectionDonePage() {
       {/* Reference photo preview */}
       {referencePhoto && (
         <CardBlock>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl border-2 border-vtb-success/30">
               <img
                 src={referencePhoto}

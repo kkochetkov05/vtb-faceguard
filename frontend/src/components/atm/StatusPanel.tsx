@@ -84,8 +84,8 @@ export default function StatusPanel({
   const Icon = cfg.icon;
 
   return (
-    <div className={`rounded-xl ${cfg.bg} p-5 transition-all duration-300`}>
-      <div className="flex items-start gap-4">
+    <div className={`rounded-xl ${cfg.bg} p-4 transition-all duration-300 sm:p-5`}>
+      <div className="flex items-start gap-3 sm:gap-4">
         <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${cfg.bg} ${cfg.color}`}>
           <Icon
             size={24}
@@ -93,10 +93,10 @@ export default function StatusPanel({
           />
         </div>
         <div className="flex-1">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
             <h3 className={`text-base font-bold ${cfg.color}`}>{cfg.label}</h3>
             {confidence !== null && (
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${cfg.bg} ${cfg.color}`}>
+              <span className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-bold ${cfg.bg} ${cfg.color}`}>
                 {confidence.toFixed(0)}%
               </span>
             )}
@@ -105,7 +105,7 @@ export default function StatusPanel({
 
           {/* Кнопки подтверждения для uncertain */}
           {phase === "uncertain" && showConfirmationActions && (
-            <div className="mt-4 flex gap-3">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={onDeny}
                 className="flex items-center gap-2 rounded-lg border border-vtb-border bg-white px-5 py-2.5 text-sm font-semibold text-vtb-text hover:bg-vtb-bg transition-colors"

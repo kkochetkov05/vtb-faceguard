@@ -62,7 +62,7 @@ export default function ProtectionPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       {/* Заголовок */}
       <div>
         <h1 className="text-xl font-bold text-vtb-navy">ВТБ Защита</h1>
@@ -72,9 +72,9 @@ export default function ProtectionPage() {
       </div>
 
       {/* Hero-баннер */}
-      <div className="relative overflow-hidden rounded-vtb bg-gradient-to-br from-[#001A4D] to-vtb-dark p-6 text-white">
-        <div className="relative z-10 flex items-start gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10">
+      <div className="relative overflow-hidden rounded-vtb bg-gradient-to-br from-[#001A4D] to-vtb-dark p-5 text-white sm:p-6">
+        <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 sm:h-14 sm:w-14">
             <ShieldCheck size={28} />
           </div>
           <div>
@@ -90,10 +90,10 @@ export default function ProtectionPage() {
 
       {/* Переключатель */}
       <CardBlock>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <Shield size={20} className="text-vtb-primary" />
-            <div>
+            <div className="min-w-0">
               <p className="text-sm font-semibold text-vtb-navy">Защита снятия наличных</p>
               <p className="text-xs text-vtb-secondary">
                 {status === "active"
@@ -104,7 +104,7 @@ export default function ProtectionPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 sm:justify-end">
             {isLoading && (
               <Loader2 size={16} className="animate-spin text-vtb-primary" />
             )}
@@ -122,7 +122,7 @@ export default function ProtectionPage() {
       {/* Активная защита — инфо */}
       {status === "active" && referencePhoto && (
         <CardBlock>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 border-vtb-success/30">
               <img
                 src={referencePhoto}
@@ -130,7 +130,7 @@ export default function ProtectionPage() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={16} className="text-vtb-success" />
                 <p className="text-sm font-semibold text-vtb-navy">Защита подключена</p>
@@ -148,7 +148,7 @@ export default function ProtectionPage() {
             </div>
             <button
               onClick={() => navigate("/protection/capture")}
-              className="vtb-btn-outline text-xs"
+              className="vtb-btn-outline w-full text-xs sm:w-auto"
             >
               <ImageIcon size={14} />
               Обновить фото

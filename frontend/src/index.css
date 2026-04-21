@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply overflow-x-hidden;
+  }
+
   body {
-    @apply bg-vtb-bg text-vtb-text antialiased;
+    @apply overflow-x-hidden bg-vtb-bg text-vtb-text antialiased;
     font-feature-settings: "ss01", "ss02";
+  }
+
+  #root {
+    @apply min-h-[100dvh];
   }
 }
 
@@ -13,9 +21,9 @@
   /* ===== Кнопки ===== */
   .vtb-btn {
     @apply inline-flex items-center justify-center gap-2 rounded-vtb-sm
-           px-6 py-3 text-sm font-semibold transition-all duration-150
+           min-w-0 whitespace-normal px-4 py-3 text-sm font-semibold transition-all duration-150
            focus:outline-none focus:ring-2 focus:ring-vtb-primary/30 focus:ring-offset-2
-           disabled:opacity-40 disabled:cursor-not-allowed;
+           disabled:opacity-40 disabled:cursor-not-allowed sm:px-6;
   }
 
   .vtb-btn-primary {
@@ -41,7 +49,7 @@
 
   /* ===== Карточка ===== */
   .vtb-card {
-    @apply rounded-vtb bg-vtb-card p-5 shadow-vtb;
+    @apply rounded-vtb bg-vtb-card p-4 shadow-vtb sm:p-5;
   }
 
   /* ===== Навигация sidebar ===== */

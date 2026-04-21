@@ -375,12 +375,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
       />
 
       {/* Mode tabs + device selector */}
-      <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-        <div className="flex gap-1">
+      <div className="flex flex-col gap-3 border-b border-white/10 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-1">
           <button
             onClick={switchToCamera}
             disabled={disabled}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors
+            className={`flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors
               ${mode === "camera"
                 ? "bg-white/10 text-white"
                 : "text-white/40 hover:text-white/60"
@@ -392,7 +392,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
           <button
             onClick={switchToUpload}
             disabled={disabled}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors
+            className={`flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-colors
               ${mode === "upload"
                 ? "bg-white/10 text-white"
                 : "text-white/40 hover:text-white/60"
@@ -405,12 +405,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
 
         {/* Device selector */}
         {mode === "camera" && (
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <select
               value={selectedDeviceId}
               onChange={(e) => setSelectedDeviceId(e.target.value)}
               disabled={disabled || cameraStatus === "initializing"}
-              className="appearance-none rounded-md border border-white/10 bg-white/5 py-1.5 pl-3 pr-7 text-[11px] text-white/70 focus:border-vtb-primary focus:outline-none disabled:opacity-30"
+              className="w-full appearance-none rounded-md border border-white/10 bg-white/5 py-2 pl-3 pr-7 text-[11px] text-white/70 focus:border-vtb-primary focus:outline-none disabled:opacity-30 sm:w-auto sm:py-1.5"
             >
               {devices.length === 0 && (
                 <option value="">Поиск камер...</option>
@@ -430,7 +430,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
       </div>
 
       {/* Viewport area */}
-      <div className="relative aspect-[4/3] w-full">
+      <div className="relative aspect-[3/4] w-full sm:aspect-[4/3] lg:aspect-[16/10]">
         {/* ── Camera mode ── */}
         {mode === "camera" && (
           <>
@@ -463,7 +463,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
             {/* Camera error state */}
             {cameraError && (
               <div className="absolute inset-0 flex items-center justify-center p-6">
-                <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex max-w-xs flex-col items-center gap-3 px-4 text-center">
                   {cameraStatus === "error_permission" ? (
                     <MonitorOff size={40} className="text-vtb-warning/60" />
                   ) : (
@@ -474,7 +474,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
                   </p>
                   <button
                     onClick={switchToUpload}
-                    className="mt-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-xs font-medium text-white/70 hover:bg-white/10 transition-colors"
+                    className="mt-1 w-full rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-xs font-medium text-white/70 transition-colors hover:bg-white/10 sm:w-auto"
                   >
                     Загрузить фото вместо камеры
                   </button>
@@ -523,10 +523,10 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className={`absolute inset-0 flex cursor-pointer items-center justify-center transition-colors
+                className={`absolute inset-0 flex cursor-pointer items-center justify-center p-4 transition-colors
                   ${isDragOver ? "bg-vtb-primary/10" : ""}`}
               >
-                <div className="flex flex-col items-center gap-3 text-center">
+                <div className="flex max-w-xs flex-col items-center gap-3 text-center">
                   <div
                     className={`flex h-16 w-16 items-center justify-center rounded-full border-2 border-dashed transition-colors
                     ${isDragOver ? "border-vtb-primary" : "border-white/20"}`}
@@ -561,7 +561,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
             {/* Face oval */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div
-                className={`h-48 w-36 rounded-[50%] border-2 border-dashed transition-all duration-500
+                className={`h-[58%] w-[42%] max-w-[11rem] rounded-[50%] border-2 border-dashed transition-all duration-500 sm:h-48 sm:w-36
                   ${isScanning
                     ? "border-vtb-primary animate-pulse scale-105"
                     : "border-white/30"
@@ -589,12 +589,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
 
         {/* Result overlays */}
         {phase === "approved" && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3 animate-fade-in">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-vtb-success/20">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+            <div className="animate-fade-in flex flex-col items-center gap-3 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vtb-success/20 sm:h-20 sm:w-20">
                 <ShieldCheck size={40} className="text-vtb-success" />
               </div>
-              <p className="text-lg font-bold text-vtb-success">
+              <p className="text-base font-bold text-vtb-success sm:text-lg">
                 Верифицировано
               </p>
             </div>
@@ -602,12 +602,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
         )}
 
         {phase === "uncertain" && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3 animate-fade-in">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-vtb-warning/20">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+            <div className="animate-fade-in flex flex-col items-center gap-3 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vtb-warning/20 sm:h-20 sm:w-20">
                 <ShieldAlert size={40} className="text-vtb-warning" />
               </div>
-              <p className="text-lg font-bold text-vtb-warning">
+              <p className="text-base font-bold text-vtb-warning sm:text-lg">
                 Подозрительно
               </p>
             </div>
@@ -615,12 +615,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
         )}
 
         {phase === "blocked" && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3 animate-fade-in">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-vtb-danger/20">
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
+            <div className="animate-fade-in flex flex-col items-center gap-3 text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-vtb-danger/20 sm:h-20 sm:w-20">
                 <ShieldX size={40} className="text-vtb-danger" />
               </div>
-              <p className="text-lg font-bold text-vtb-danger">
+              <p className="text-base font-bold text-vtb-danger sm:text-lg">
                 Заблокировано
               </p>
             </div>
@@ -628,7 +628,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
         )}
 
         {/* ATM label */}
-        <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded bg-black/40 px-2 py-1">
+        <div className="pointer-events-none absolute left-3 top-3 flex max-w-[calc(100%-1.5rem)] items-center gap-2 rounded bg-black/40 px-2 py-1">
           <div
             className={`h-2 w-2 rounded-full ${
               cameraReady || uploadPreview
@@ -643,7 +643,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
 
         {/* Ready indicator (camera active + idle) */}
         {mode === "camera" && cameraReady && phase === "idle" && (
-          <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5">
+          <div className="pointer-events-none absolute bottom-3 left-1/2 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-2 rounded-full bg-black/40 px-3 py-1.5">
             <div className="h-2 w-2 rounded-full bg-vtb-success animate-pulse" />
             <span className="text-[11px] text-white/60">Камера готова</span>
           </div>
@@ -651,7 +651,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
 
         {/* Upload ready indicator */}
         {mode === "upload" && uploadPreview && phase === "idle" && (
-          <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5">
+          <div className="pointer-events-none absolute bottom-3 left-1/2 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-2 rounded-full bg-black/40 px-3 py-1.5">
             <div className="h-2 w-2 rounded-full bg-vtb-success" />
             <span className="text-[11px] text-white/60">
               Фото загружено

@@ -356,7 +356,7 @@ export default function ATMPage() {
   const activePreset = presetMeta[demoPreset];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 sm:space-y-6">
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-xl font-bold text-vtb-navy">ATM Demo</h1>
@@ -376,12 +376,12 @@ export default function ATMPage() {
         На этом экране можно показать реальную проверку или заранее подготовленный сценарий.
       </AlertPanel>
 
-      <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,1fr)]">
         <div className="space-y-4">
           {phase === "idle" && (
-            <div className="relative overflow-hidden rounded-vtb border border-vtb-primary/15 bg-gradient-to-br from-white to-vtb-light/70 p-6 shadow-vtb">
+            <div className="relative overflow-hidden rounded-vtb border border-vtb-primary/15 bg-gradient-to-br from-white to-vtb-light/70 p-4 shadow-vtb sm:p-6">
               <div className="relative z-10 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-vtb-primary/10 text-vtb-primary">
                     <Sparkles size={22} />
                   </div>
@@ -431,7 +431,7 @@ export default function ATMPage() {
           )}
 
           <div className="overflow-hidden rounded-vtb bg-[#0A0E1A] shadow-vtb-md">
-            <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+            <div className="flex flex-col gap-2 border-b border-white/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <div className="flex items-center gap-2 text-white/80">
                 <Landmark size={18} className="text-vtb-primary" />
                 <span className="text-sm font-semibold">ВТБ ATM Demo</span>
@@ -439,7 +439,7 @@ export default function ATMPage() {
               <span className="text-xs text-white/30">ATM #00247</span>
             </div>
 
-            <div className="space-y-5 px-6 py-6">
+            <div className="space-y-5 px-4 py-4 sm:px-6 sm:py-6">
               <CameraViewport phase={phase} disabled={phase === "verifying"} />
 
               <div className="grid gap-4">
@@ -485,7 +485,7 @@ export default function ATMPage() {
 
               {phase === "uncertain" && verification && (
                 <div className="rounded-2xl border border-vtb-warning/30 bg-[#1A1408] p-5 text-white shadow-vtb-md">
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-vtb-warning/15 text-vtb-warning">
                       <AlertTriangle size={22} />
                     </div>
@@ -498,17 +498,17 @@ export default function ATMPage() {
                         Если операцию выполняете вы, подтвердите это. Если нет,
                         банкомат сразу усилит защитный сценарий.
                       </p>
-                      <div className="mt-4 flex flex-wrap gap-3">
+                      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                         <button
                           onClick={handleDenyIdentity}
-                          className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 sm:w-auto"
                         >
                           <UserX size={16} />
                           Нет, это не я
                         </button>
                         <button
                           onClick={handleConfirmIdentity}
-                          className="flex items-center gap-2 rounded-lg bg-vtb-warning px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 transition-colors"
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-vtb-warning px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600 sm:w-auto"
                         >
                           <UserCheck size={16} />
                           Да, это я
@@ -531,7 +531,7 @@ export default function ATMPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-3">
+              <div className="sticky bottom-0 -mx-4 flex flex-col gap-3 border-t border-white/10 bg-[#0A0E1A]/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
                 <button
                   onClick={awaitingLivenessRetry ? handleRetryLiveness : handleInsertCard}
                   disabled={phase === "verifying"}
@@ -552,7 +552,7 @@ export default function ATMPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/5 px-6 py-3 text-center">
+            <div className="border-t border-white/5 px-4 py-3 text-center sm:px-6">
               <p className="text-[11px] text-white/20">
                 Камера ноутбука используется как камера банкомата
               </p>
@@ -619,7 +619,7 @@ export default function ATMPage() {
                 {verification?.title ?? "После запуска здесь появится итог проверки"}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-vtb-sm bg-vtb-bg p-3">
                 <p className="text-[11px] uppercase tracking-wide text-vtb-secondary">
                   Confidence
@@ -641,7 +641,7 @@ export default function ATMPage() {
             </div>
 
             <div className="mt-3 rounded-vtb-sm bg-vtb-bg p-3">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-[11px] uppercase tracking-wide text-vtb-secondary">
                     Liveness

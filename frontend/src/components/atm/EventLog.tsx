@@ -43,17 +43,17 @@ export default function EventLog({ events }: Props) {
         </span>
       </div>
 
-      <div className="space-y-2 max-h-64 overflow-y-auto">
+      <div className="max-h-64 space-y-2 overflow-y-auto sm:max-h-72">
         {[...events].reverse().map((ev) => (
           <div
             key={ev.id}
-            className="flex items-start gap-3 rounded-lg bg-vtb-bg/50 px-3 py-2 animate-fade-in"
+            className="animate-fade-in flex items-start gap-2 rounded-lg bg-vtb-bg/50 px-3 py-2 sm:gap-3"
           >
             <div className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${typeColors[ev.type]}`} />
             <div className="flex-1 min-w-0">
               <p className="text-xs text-vtb-text">{ev.text}</p>
             </div>
-            <span className="shrink-0 text-[10px] font-mono text-vtb-secondary/60">
+            <span className="shrink-0 pt-0.5 text-[10px] font-mono text-vtb-secondary/60">
               {ev.time}
             </span>
           </div>

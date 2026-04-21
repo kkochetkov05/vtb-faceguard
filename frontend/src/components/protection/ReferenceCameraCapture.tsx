@@ -182,18 +182,18 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
     <div className="overflow-hidden rounded-vtb bg-[#0A0E1A] shadow-vtb-md">
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+      <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 text-white/80">
           <Camera size={16} className="text-vtb-primary" />
           <span className="text-sm font-semibold">Сделать фото</span>
         </div>
 
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select
             value={selectedDeviceId}
             onChange={(e) => setSelectedDeviceId(e.target.value)}
             disabled={disabled || cameraStatus === "initializing"}
-            className="appearance-none rounded-md border border-white/10 bg-white/5 py-1.5 pl-3 pr-7 text-[11px] text-white/70 focus:border-vtb-primary focus:outline-none disabled:opacity-30"
+            className="w-full appearance-none rounded-md border border-white/10 bg-white/5 py-2 pl-3 pr-7 text-[11px] text-white/70 focus:border-vtb-primary focus:outline-none disabled:opacity-30 sm:w-auto sm:py-1.5"
           >
             {devices.length === 0 && <option value="">Поиск камер...</option>}
             {devices.map((device) => (
@@ -209,7 +209,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
         </div>
       </div>
 
-      <div className="relative aspect-[4/3] w-full bg-black">
+      <div className="relative aspect-[3/4] w-full bg-black sm:aspect-[4/3]">
         <video
           ref={videoRef}
           autoPlay
@@ -224,7 +224,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
 
         {cameraReady && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-[68%] w-[36%] rounded-[50%] border-2 border-dashed border-white/50" />
+            <div className="h-[70%] w-[46%] max-w-[13rem] rounded-[50%] border-2 border-dashed border-white/50 sm:w-[36%]" />
           </div>
         )}
 
@@ -267,7 +267,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
             type="button"
             onClick={() => startCamera(selectedDeviceId || undefined)}
             disabled={disabled || cameraStatus === "initializing"}
-            className="vtb-btn-outline border-white/20 bg-white/5 text-white hover:bg-white/10 disabled:opacity-40"
+            className="vtb-btn-outline w-full border-white/20 bg-white/5 text-white hover:bg-white/10 disabled:opacity-40 sm:w-auto"
           >
             <RefreshCw size={16} />
             Обновить камеру
@@ -276,7 +276,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
             type="button"
             onClick={handleCapture}
             disabled={disabled || !cameraReady}
-            className="vtb-btn-primary flex-1 disabled:opacity-40"
+            className="vtb-btn-primary w-full flex-1 disabled:opacity-40"
           >
             <Check size={16} />
             Использовать этот кадр

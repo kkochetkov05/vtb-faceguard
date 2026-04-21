@@ -48,9 +48,9 @@ export default function VTBLayout({ children }: { children: React.ReactNode }) {
   const { status } = useProtection();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-vtb-bg">
+    <div className="flex min-h-[100dvh] bg-vtb-bg">
       {/* ===== Sidebar ===== */}
-      <aside className="flex w-64 shrink-0 flex-col border-r border-vtb-border bg-white">
+      <aside className="hidden w-64 shrink-0 border-r border-vtb-border bg-white lg:flex lg:flex-col">
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 px-5">
           <VTBLogo />
@@ -127,27 +127,68 @@ export default function VTBLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* ===== Main area ===== */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Topbar */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-vtb-border bg-white px-8">
-          <div /> {/* Spacer */}
-          <div className="flex items-center gap-4">
-            <button className="relative rounded-full p-2 text-vtb-secondary hover:bg-vtb-bg transition-colors">
-              <Bell size={20} />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-vtb-danger" />
-            </button>
-            <div className="flex items-center gap-2 rounded-full bg-vtb-bg px-3 py-1.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-vtb-primary text-white">
-                <User size={14} />
+        <header className="sticky top-0 z-20 shrink-0 border-b border-vtb-border bg-white/95 backdrop-blur">
+          <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-3 lg:gap-0">
+              <div className="lg:hidden">
+                <VTBLogo />
               </div>
-              <span className="text-sm font-medium text-vtb-navy">Кирилл К.</span>
+              <span className="rounded-full bg-vtb-light px-2 py-0.5 text-[10px] font-bold text-vtb-primary lg:hidden">
+                ОНЛАЙН
+              </span>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button className="relative rounded-full p-2 text-vtb-secondary transition-colors hover:bg-vtb-bg">
+                <Bell size={18} />
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-vtb-danger" />
+              </button>
+              <div className="flex items-center gap-2 rounded-full bg-vtb-bg px-2 py-1.5 sm:px-3">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-vtb-primary text-white">
+                  <User size={14} />
+                </div>
+                <span className="hidden text-sm font-medium text-vtb-navy sm:inline">Кирилл К.</span>
+              </div>
             </div>
           </div>
+
+          <nav className="border-t border-vtb-border/70 px-4 py-2 lg:hidden">
+            <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+              {[...mainNav, ...demoNav].map(({ to, label, icon: Icon }) => {
+                const isActive =
+                  to === "/"
+                    ? pathname === "/"
+                    : pathname === to || pathname.startsWith(to + "/");
+
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "border-vtb-primary/20 bg-vtb-light text-vtb-primary"
+                        : "border-vtb-border bg-white text-vtb-secondary"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    <span>{label}</span>
+                    {to === "/protection" && status === "active" && (
+                      <ShieldCheck size={14} className="text-vtb-success" />
+                    )}
+                    {to === "/protection" && status === "pending" && (
+                      <span className="h-2 w-2 rounded-full bg-vtb-warning" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="mx-auto max-w-3xl">{children}</div>
+        <main className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+          <div className="mx-auto max-w-6xl min-w-0">{children}</div>
         </main>
       </div>
     </div>

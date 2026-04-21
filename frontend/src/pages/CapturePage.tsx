@@ -124,7 +124,7 @@ export default function CapturePage() {
   const hasError = localError || uploadError;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 pb-24 sm:space-y-6 sm:pb-0">
       {/* Back + Title */}
       <div>
         <button
@@ -148,7 +148,7 @@ export default function CapturePage() {
 
       {!preview && (
         <div className="flex justify-center">
-          <div className="inline-flex rounded-full border border-vtb-border bg-white p-1 shadow-vtb-sm">
+          <div className="inline-flex w-full max-w-xl flex-col rounded-3xl border border-vtb-border bg-white p-1 shadow-vtb-sm sm:w-auto sm:flex-row sm:rounded-full">
             <button
               type="button"
               onClick={() => setInputMode("upload")}
@@ -187,8 +187,8 @@ export default function CapturePage() {
             onDrop={onDrop}
             onClick={() => fileInputRef.current?.click()}
             className={`
-              relative flex cursor-pointer flex-col items-center gap-4 rounded-vtb
-              border-2 border-dashed py-16 transition-all duration-200
+              relative flex min-h-[320px] cursor-pointer flex-col items-center justify-center gap-4 overflow-hidden rounded-vtb
+              border-2 border-dashed px-4 py-10 transition-all duration-200 sm:min-h-[420px] sm:py-16
               ${dragOver
                 ? "border-vtb-primary bg-vtb-primary/5 scale-[1.01]"
                 : "border-vtb-border bg-white hover:border-vtb-primary/40 hover:bg-vtb-bg/50"
@@ -202,7 +202,7 @@ export default function CapturePage() {
 
             <div className="relative z-10 flex flex-col items-center gap-4">
               <div className={`
-                flex h-20 w-20 items-center justify-center rounded-2xl transition-colors
+                flex h-16 w-16 items-center justify-center rounded-2xl transition-colors sm:h-20 sm:w-20
                 ${dragOver ? "bg-vtb-primary text-white" : "bg-vtb-light text-vtb-primary"}
               `}>
                 <Upload size={32} />
@@ -217,7 +217,7 @@ export default function CapturePage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <span className="rounded-full bg-vtb-bg px-2.5 py-1 text-[10px] font-medium text-vtb-secondary">
                   JPEG
                 </span>
@@ -248,8 +248,8 @@ export default function CapturePage() {
       ) : (
         /* ---------- PREVIEW ---------- */
         <div className="space-y-4">
-          <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-vtb bg-gray-900">
-            <div className="relative aspect-[3/4]">
+          <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-vtb bg-gray-900 shadow-vtb-md">
+            <div className="relative aspect-[3/4] max-h-[65dvh] min-h-[320px] sm:min-h-0">
               <img
                 src={preview}
                 alt="Превью фото"
@@ -258,7 +258,7 @@ export default function CapturePage() {
 
               {/* Face oval overlay */}
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div className="h-64 w-48 rounded-[50%] border-2 border-dashed border-white/40" />
+                <div className="h-[68%] w-[48%] max-w-[12rem] rounded-[50%] border-2 border-dashed border-white/40 sm:w-[46%]" />
               </div>
 
               {/* Uploading overlay */}
@@ -305,19 +305,21 @@ export default function CapturePage() {
       )}
 
       {/* Controls */}
-      <div className="flex justify-center gap-3">
+      <div className="sticky bottom-0 z-10 -mx-4 border-t border-vtb-border/60 bg-vtb-bg/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
         {preview && !isUploading && (
           <>
-            <button onClick={clearSelection} className="vtb-btn-outline">
+            <button onClick={clearSelection} className="vtb-btn-outline w-full sm:w-auto">
               <RotateCcw size={16} />
               Выбрать другое
             </button>
-            <button onClick={handleUpload} className="vtb-btn-primary">
+            <button onClick={handleUpload} className="vtb-btn-primary w-full sm:w-auto">
               <Upload size={16} />
               Сохранить фото
             </button>
           </>
         )}
+        </div>
       </div>
     </div>
   );
