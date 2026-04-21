@@ -288,6 +288,42 @@ cd frontend
 npm run build
 ```
 
+## Обновление продакшена
+
+Если проект задеплоен на сервере в `/opt/vtb-faceguard`, можно использовать
+скрипт [`scripts/deploy_prod.sh`](/projects/vtb-faceguard/scripts/deploy_prod.sh).
+
+Подготовка на сервере:
+
+```bash
+cd /opt/vtb-faceguard
+chmod +x scripts/deploy_prod.sh
+```
+
+Обычное обновление:
+
+```bash
+cd /opt/vtb-faceguard
+./scripts/deploy_prod.sh
+```
+
+Полезные варианты:
+
+```bash
+./scripts/deploy_prod.sh --frontend-only
+./scripts/deploy_prod.sh --backend-only
+./scripts/deploy_prod.sh --skip-backend-deps
+./scripts/deploy_prod.sh --skip-frontend-deps
+./scripts/deploy_prod.sh --no-backup
+```
+
+По умолчанию скрипт:
+- делает `git pull --ff-only`;
+- сохраняет резервные копии `backend/db.json` и `backend/uploads`;
+- обновляет backend и перезапускает `systemd`-сервис `vtb-faceguard`;
+- пересобирает frontend и публикует его в `/var/www/vtb-faceguard`;
+- показывает последние логи backend-сервиса.
+
 ## Demo presets
 
 На ATM-странице есть два режима показа:
