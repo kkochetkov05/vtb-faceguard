@@ -13,6 +13,12 @@ import {
 import AlertPanel from "@/components/ui/AlertPanel";
 import { useProtection } from "@/context/ProtectionContext";
 import ReferenceCameraCapture from "@/components/protection/ReferenceCameraCapture";
+import {
+  buildReferenceViewportStyle,
+  faceGuideClass,
+  faceGuideWrapperClass,
+  referenceCameraShellClass,
+} from "@/components/camera/geometry";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE_MB = 10;
@@ -30,12 +36,31 @@ export default function CapturePage() {
   const [dragOver, setDragOver] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [inputMode, setInputMode] = useState<InputMode>("upload");
+  const [previewMirrored, setPreviewMirrored] = useState(false);
+  const [previewAspectRatio, setPreviewAspectRatio] = useState(4 / 3);
 
-  const setPreviewFromFile = useCallback((file: File, previewUrl?: string) => {
+  const syncPreviewAspectRatio = useCallback((src: string) => {
+    const image = new Image();
+    image.onload = () => {
+      if (image.naturalWidth && image.naturalHeight) {
+        setPreviewAspectRatio(image.naturalWidth / image.naturalHeight);
+      }
+    };
+    image.src = src;
+  }, []);
+
+  const setPreviewFromFile = useCallback((
+    file: File,
+    previewUrl?: string,
+    options?: { mirrored?: boolean },
+  ) => {
     setSelectedFile(file);
     setLocalError(null);
+    setPreviewMirrored(Boolean(options?.mirrored));
+    setPreviewAspectRatio(4 / 3);
 
     if (previewUrl) {
+      syncPreviewAspectRatio(previewUrl);
       setPreview((prev) => {
         if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
         return previewUrl;
@@ -45,16 +70,22 @@ export default function CapturePage() {
 
     const reader = new FileReader();
     reader.onload = () => {
+      const nextPreview = reader.result as string;
+      syncPreviewAspectRatio(nextPreview);
       setPreview((prev) => {
         if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-        return reader.result as string;
+        return nextPreview;
       });
     };
     reader.readAsDataURL(file);
-  }, []);
+  }, [syncPreviewAspectRatio]);
 
   /* ---------- helpers ---------- */
-  const validateAndSet = useCallback((file: File, previewUrl?: string) => {
+  const validateAndSet = useCallback((
+    file: File,
+    previewUrl?: string,
+    options?: { mirrored?: boolean },
+  ) => {
     setLocalError(null);
 
     if (!ACCEPTED_TYPES.includes(file.type)) {
@@ -66,19 +97,21 @@ export default function CapturePage() {
       return;
     }
 
-    setPreviewFromFile(file, previewUrl);
+    setPreviewFromFile(file, previewUrl, options);
   }, [setPreviewFromFile]);
 
   const clearSelection = () => {
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     setSelectedFile(null);
     setPreview(null);
+    setPreviewMirrored(false);
+    setPreviewAspectRatio(4 / 3);
     setLocalError(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleCameraCapture = useCallback((file: File, previewUrl: string) => {
-    validateAndSet(file, previewUrl);
+    validateAndSet(file, previewUrl, { mirrored: true });
   }, [validateAndSet]);
 
   useEffect(() => {
@@ -102,13 +135,13 @@ export default function CapturePage() {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) validateAndSet(file);
+    if (file) validateAndSet(file, undefined, { mirrored: false });
   };
 
   /* ---------- file picker ---------- */
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) validateAndSet(file);
+    if (file) validateAndSet(file, undefined, { mirrored: false });
   };
 
   /* ---------- upload ---------- */
@@ -122,6 +155,7 @@ export default function CapturePage() {
 
   const isUploading = uploadStatus === "loading";
   const hasError = localError || uploadError;
+  const previewViewportStyle = buildReferenceViewportStyle(previewAspectRatio);
 
   return (
     <div className="space-y-5 pb-24 sm:space-y-6 sm:pb-0">
@@ -248,17 +282,22 @@ export default function CapturePage() {
       ) : (
         /* ---------- PREVIEW ---------- */
         <div className="space-y-4">
-          <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-vtb bg-gray-900 shadow-vtb-md">
-            <div className="relative aspect-[3/4] max-h-[65dvh] min-h-[320px] sm:min-h-0">
+          <div className={`${referenceCameraShellClass} relative overflow-hidden rounded-vtb bg-gray-900 shadow-vtb-md`}>
+            <div
+              className="relative mx-auto overflow-hidden"
+              style={previewViewportStyle}
+            >
               <img
                 src={preview}
                 alt="Превью фото"
-                className="h-full w-full object-cover"
+                className={`absolute inset-0 h-full w-full object-cover ${
+                  previewMirrored ? "scale-x-[-1]" : ""
+                }`}
               />
 
               {/* Face oval overlay */}
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div className="h-[68%] w-[48%] max-w-[12rem] rounded-[50%] border-2 border-dashed border-white/40 sm:w-[46%]" />
+              <div className={faceGuideWrapperClass}>
+                <div className={faceGuideClass("border-white/40")} />
               </div>
 
               {/* Uploading overlay */}

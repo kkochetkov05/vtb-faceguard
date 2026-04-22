@@ -31,6 +31,12 @@ import {
   ChevronDown,
 } from "lucide-react";
 import type { ATMPhase } from "@/services/atmService";
+import {
+  buildReferenceViewportStyle,
+  faceGuideClass,
+  faceGuideWrapperClass,
+} from "@/components/camera/geometry";
+import { captureVideoFrameToCanvas } from "@/components/camera/captureFrame";
 
 /* ─── Types ─── */
 
@@ -86,10 +92,12 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
   const [uploadBlob, setUploadBlob] = useState<Blob | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [viewportAspectRatio, setViewportAspectRatio] = useState(4 / 3);
 
   /* --- Refs --- */
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,6 +111,19 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
     cameraStatus === "error_permission" ||
     cameraStatus === "error_not_found" ||
     cameraStatus === "error_other";
+  const viewportStyle = buildReferenceViewportStyle(viewportAspectRatio);
+
+  const syncViewportAspectRatio = useCallback(() => {
+    const video = videoRef.current;
+    const track = streamRef.current?.getVideoTracks()[0];
+    const settings = track?.getSettings();
+
+    const width = video?.videoWidth || settings?.width || 0;
+    const height = video?.videoHeight || settings?.height || 0;
+    if (width && height) {
+      setViewportAspectRatio(width / height);
+    }
+  }, []);
 
   /* ─── Enumerate devices ─── */
 
@@ -138,6 +159,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    setViewportAspectRatio(4 / 3);
     setCameraStatus("stopped");
   }, []);
 
@@ -162,6 +184,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           await videoRef.current.play();
+          syncViewportAspectRatio();
         }
 
         setCameraStatus("active");
@@ -183,7 +206,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
         }
       }
     },
-    [stopCamera, enumerateDevices],
+    [stopCamera, enumerateDevices, syncViewportAspectRatio],
   );
 
   /* ─── Effects ─── */
@@ -220,26 +243,16 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
   const captureFrame = useCallback((): Blob | null => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
+    const viewport = viewportRef.current;
     if (!video || !canvas || !cameraReady) return null;
+    const viewportRect = viewport?.getBoundingClientRect();
+    const didDraw = captureVideoFrameToCanvas(video, canvas, {
+      mirrorOutput: false,
+      viewportWidth: viewportRect?.width,
+      viewportHeight: viewportRect?.height,
+    });
+    if (!didDraw) return null;
 
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return null;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Sync conversion to blob via toBlob callback
-    let blob: Blob | null = null;
-    canvas.toBlob(
-      (b) => {
-        blob = b;
-      },
-      "image/jpeg",
-      0.92,
-    );
-
-    // toBlob is async — use dataURL as fallback
     const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
     const byteString = atob(dataUrl.split(",")[1]);
     const ab = new ArrayBuffer(byteString.length);
@@ -430,7 +443,11 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
       </div>
 
       {/* Viewport area */}
-      <div className="relative aspect-[3/4] w-full sm:aspect-[4/3] lg:aspect-[16/10]">
+      <div
+        ref={viewportRef}
+        className="relative mx-auto w-full overflow-hidden"
+        style={viewportStyle}
+      >
         {/* ── Camera mode ── */}
         {mode === "camera" && (
           <>
@@ -440,6 +457,7 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
               autoPlay
               playsInline
               muted
+              onLoadedMetadata={syncViewportAspectRatio}
               className={`absolute inset-0 h-full w-full object-cover ${
                 showResult ? "brightness-50" : ""
               }`}
@@ -552,22 +570,21 @@ export default function CameraViewport({ phase, onCapture, disabled }: Props) {
 
         {/* ── Overlays (shared for both modes) ── */}
 
-        {/* Scanning overlay — face oval + animation */}
+        {(cameraReady || uploadPreview) && (
+          <div className={faceGuideWrapperClass}>
+            <div
+              className={`${faceGuideClass(
+                isScanning ? "border-vtb-primary" : "border-white/40",
+              )} transition-all duration-500 ${isScanning ? "animate-pulse scale-105" : ""}`}
+            />
+          </div>
+        )}
+
+        {/* Scanning overlay */}
         {isActive && !showResult && (cameraReady || uploadPreview) && (
           <>
             {/* Scan animation */}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-vtb-primary/5 to-transparent animate-pulse" />
-
-            {/* Face oval */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div
-                className={`h-[58%] w-[42%] max-w-[11rem] rounded-[50%] border-2 border-dashed transition-all duration-500 sm:h-48 sm:w-36
-                  ${isScanning
-                    ? "border-vtb-primary animate-pulse scale-105"
-                    : "border-white/30"
-                  }`}
-              />
-            </div>
 
             {/* Scanning indicator */}
             {isScanning && (

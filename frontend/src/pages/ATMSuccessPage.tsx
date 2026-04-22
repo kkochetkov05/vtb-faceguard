@@ -58,7 +58,7 @@ export default function ATMSuccessPage() {
         </div>
 
         <div className="border-t border-white/5 px-6 py-3 text-center">
-          <p className="text-[11px] text-white/20">Мультикарта •4567 — Кирилл К.</p>
+          <p className="text-[11px] text-white/20">Мультикарта •4567 — основной профиль</p>
         </div>
       </div>
     </div>

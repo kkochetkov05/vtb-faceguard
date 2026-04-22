@@ -8,6 +8,11 @@ FRONTEND_DIR="$PROJECT_ROOT/frontend"
 WEB_ROOT="${WEB_ROOT:-/var/www/vtb-faceguard}"
 SERVICE_NAME="${SERVICE_NAME:-vtb-faceguard}"
 BACKUP_SUFFIX="$(date +%Y%m%d-%H%M%S)"
+SQLITE_PATH="${SQLITE_PATH:-data/faceguard.sqlite3}"
+
+if [[ "$SQLITE_PATH" != /* ]]; then
+  SQLITE_PATH="$BACKEND_DIR/$SQLITE_PATH"
+fi
 
 UPDATE_BACKEND=1
 UPDATE_FRONTEND=1
@@ -24,13 +29,14 @@ Options:
   --backend-only          Update only backend
   --skip-backend-deps     Skip pip install -r requirements.txt
   --skip-frontend-deps    Skip npm install
-  --no-backup             Do not back up db.json and uploads
+  --no-backup             Do not back up SQLite database and uploads
   --help                  Show this help
 
 Environment overrides:
   PROJECT_ROOT=/opt/vtb-faceguard
   WEB_ROOT=/var/www/vtb-faceguard
   SERVICE_NAME=vtb-faceguard
+  SQLITE_PATH=data/faceguard.sqlite3
 EOF
 }
 
@@ -89,8 +95,8 @@ git -C "$PROJECT_ROOT" pull --ff-only
 
 if [[ "$MAKE_BACKUP" -eq 1 && "$UPDATE_BACKEND" -eq 1 ]]; then
   log "Creating backup of backend state"
-  if [[ -f "$BACKEND_DIR/db.json" ]]; then
-    cp "$BACKEND_DIR/db.json" "$BACKEND_DIR/db.json.$BACKUP_SUFFIX.bak"
+  if [[ -f "$SQLITE_PATH" ]]; then
+    cp "$SQLITE_PATH" "$SQLITE_PATH.$BACKUP_SUFFIX.bak"
   fi
   if [[ -d "$BACKEND_DIR/uploads" ]]; then
     rm -rf "$BACKEND_DIR/uploads.$BACKUP_SUFFIX.bak"

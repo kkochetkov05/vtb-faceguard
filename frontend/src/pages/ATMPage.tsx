@@ -5,7 +5,6 @@ import {
   Landmark,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   UserCheck,
   UserX,
 } from "lucide-react";
@@ -378,58 +377,6 @@ export default function ATMPage() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,1fr)]">
         <div className="space-y-4">
-          {phase === "idle" && (
-            <div className="relative overflow-hidden rounded-vtb border border-vtb-primary/15 bg-gradient-to-br from-white to-vtb-light/70 p-4 shadow-vtb sm:p-6">
-              <div className="relative z-10 flex flex-col gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-vtb-primary/10 text-vtb-primary">
-                    <Sparkles size={22} />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-vtb-navy">Стартовый экран</p>
-                    <p className="text-sm text-vtb-secondary">
-                      Выберите сценарий и запустите проверку одной кнопкой.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 md:grid-cols-3">
-                  <div className="rounded-vtb-sm border border-vtb-border bg-white p-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${presetMeta.happy.tone}`}>
-                        {presetMeta.happy.badge}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm leading-5 text-vtb-text">
-                      Проверка пройдена, операция продолжается.
-                    </p>
-                  </div>
-                  <div className="rounded-vtb-sm border border-vtb-border bg-white p-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${presetMeta.review.tone}`}>
-                        {presetMeta.review.badge}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm leading-5 text-vtb-text">
-                      Система просит владельца подтвердить операцию.
-                    </p>
-                  </div>
-                  <div className="rounded-vtb-sm border border-vtb-border bg-white p-4">
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase ${presetMeta.fraud.tone}`}>
-                        {presetMeta.fraud.badge}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm leading-5 text-vtb-text">
-                      Проверка выявляет риск, операция задерживается.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-vtb-primary/5" />
-            </div>
-          )}
-
           <div className="overflow-hidden rounded-vtb bg-[#0A0E1A] shadow-vtb-md">
             <div className="flex flex-col gap-2 border-b border-white/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <div className="flex items-center gap-2 text-white/80">

@@ -21,7 +21,8 @@ class Settings(BaseSettings):
 
     # --- Пути ---
     UPLOAD_DIR: str = "uploads"
-    DB_PATH: str = "db.json"
+    SQLITE_PATH: str = "data/faceguard.sqlite3"
+    LEGACY_DB_JSON_PATH: str = "db.json"
 
     # --- ML пороги (будут использоваться позже) ---
     THRESHOLD_MATCH: float = 0.65

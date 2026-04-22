@@ -90,7 +90,8 @@ vtb-faceguard/
 │   │   │   └── liveness.py
 │   │   └── main.py
 │   ├── requirements.txt
-│   ├── db.json
+│   ├── data/
+│   │   └── faceguard.sqlite3
 │   └── uploads/
 ├── frontend/
 │   ├── src/
@@ -159,7 +160,7 @@ Storage (profiles, embeddings, photo paths)
 - [`backend/app/services/decision_engine.py`](backend/app/services/decision_engine.py)
   product logic и финальное решение
 - [`backend/app/core/storage.py`](backend/app/core/storage.py)
-  локальное JSON-хранилище профилей
+  локальное SQLite-хранилище профилей через `sqlite3`
 
 ## API
 
@@ -260,6 +261,9 @@ pip install -r requirements.txt
 # Скопировать env
 cp .env.example .env
 
+# При необходимости поменять путь до SQLite
+# SQLITE_PATH=data/faceguard.sqlite3
+
 # Запустить backend
 uvicorn app.main:app --reload --port 8000
 ```
@@ -319,7 +323,7 @@ cd /opt/vtb-faceguard
 
 По умолчанию скрипт:
 - делает `git pull --ff-only`;
-- сохраняет резервные копии `backend/db.json` и `backend/uploads`;
+- сохраняет резервные копии SQLite-базы и `backend/uploads`;
 - обновляет backend и перезапускает `systemd`-сервис `vtb-faceguard`;
 - пересобирает frontend и публикует его в `/var/www/vtb-faceguard`;
 - показывает последние логи backend-сервиса.
@@ -353,7 +357,7 @@ Preset-сценарии:
 
 ## Ограничения текущего MVP
 
-- storage локальный, на JSON-файле;
+- storage локальный, на SQLite;
 - `enableProtection` / `disableProtection` во frontend service пока mock;
 - `face.py` содержит заготовки, но не является основой текущего flow;
 - liveness в MVP эвристический и чувствителен к камере/освещению;

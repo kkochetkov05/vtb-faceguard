@@ -148,7 +148,7 @@ export default function VTBLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-vtb-primary text-white">
                   <User size={14} />
                 </div>
-                <span className="hidden text-sm font-medium text-vtb-navy sm:inline">Кирилл К.</span>
+                <span className="hidden text-sm font-medium text-vtb-navy sm:inline">Профиль клиента</span>
               </div>
             </div>
           </div>

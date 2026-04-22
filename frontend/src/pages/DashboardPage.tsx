@@ -31,7 +31,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Приветствие */}
       <div>
-        <h1 className="text-xl font-bold text-vtb-navy">Добрый день, Кирилл</h1>
+        <h1 className="text-xl font-bold text-vtb-navy">Добрый день</h1>
         <p className="mt-1 text-sm text-vtb-secondary">Все основные операции под контролем</p>
       </div>
 

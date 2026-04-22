@@ -12,6 +12,13 @@ import {
   Check,
   AlertTriangle,
 } from "lucide-react";
+import {
+  faceGuideClass,
+  faceGuideWrapperClass,
+  buildReferenceViewportStyle,
+  referenceCameraShellClass,
+} from "@/components/camera/geometry";
+import { captureVideoFrameToCanvas } from "@/components/camera/captureFrame";
 
 type CameraStatus =
   | "initializing"
@@ -55,9 +62,11 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
   const [cameraStatus, setCameraStatus] = useState<CameraStatus>("stopped");
   const [devices, setDevices] = useState<CameraDevice[]>([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
+  const [viewportAspectRatio, setViewportAspectRatio] = useState(4 / 3);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   const cameraReady = cameraStatus === "active";
@@ -65,6 +74,19 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
     cameraStatus === "error_permission" ||
     cameraStatus === "error_not_found" ||
     cameraStatus === "error_other";
+  const viewportStyle = buildReferenceViewportStyle(viewportAspectRatio);
+
+  const syncViewportAspectRatio = useCallback(() => {
+    const video = videoRef.current;
+    const track = streamRef.current?.getVideoTracks()[0];
+    const settings = track?.getSettings();
+
+    const width = video?.videoWidth || settings?.width || 0;
+    const height = video?.videoHeight || settings?.height || 0;
+    if (width && height) {
+      setViewportAspectRatio(width / height);
+    }
+  }, []);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -74,6 +96,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    setViewportAspectRatio(4 / 3);
     setCameraStatus("stopped");
   }, []);
 
@@ -115,6 +138,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           await videoRef.current.play();
+          syncViewportAspectRatio();
         }
 
         setCameraStatus("active");
@@ -134,7 +158,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
         }
       }
     },
-    [enumerateDevices, stopCamera],
+    [enumerateDevices, stopCamera, syncViewportAspectRatio],
   );
 
   useEffect(() => {
@@ -153,15 +177,16 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
   const handleCapture = useCallback(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
+    const viewport = viewportRef.current;
 
     if (!video || !canvas || !cameraReady) return;
-
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const viewportRect = viewport?.getBoundingClientRect();
+    const didDraw = captureVideoFrameToCanvas(video, canvas, {
+      mirrorOutput: false,
+      viewportWidth: viewportRect?.width,
+      viewportHeight: viewportRect?.height,
+    });
+    if (!didDraw) return;
 
     canvas.toBlob(
       (blob) => {
@@ -179,7 +204,7 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
   }, [cameraReady, onCapture, stopCamera]);
 
   return (
-    <div className="overflow-hidden rounded-vtb bg-[#0A0E1A] shadow-vtb-md">
+    <div className={`${referenceCameraShellClass} overflow-hidden rounded-vtb bg-[#0A0E1A] shadow-vtb-md`}>
       <canvas ref={canvasRef} className="hidden" />
 
       <div className="flex flex-col gap-3 border-b border-white/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
@@ -209,12 +234,17 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
         </div>
       </div>
 
-      <div className="relative aspect-[3/4] w-full bg-black sm:aspect-[4/3]">
+      <div
+        ref={viewportRef}
+        className="relative mx-auto overflow-hidden rounded-b-[inherit] bg-black"
+        style={viewportStyle}
+      >
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
+          onLoadedMetadata={syncViewportAspectRatio}
           className="absolute inset-0 h-full w-full object-cover"
           style={{
             display: cameraReady ? "block" : "none",
@@ -223,8 +253,8 @@ export default function ReferenceCameraCapture({ disabled, onCapture }: Props) {
         />
 
         {cameraReady && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-[70%] w-[46%] max-w-[13rem] rounded-[50%] border-2 border-dashed border-white/50 sm:w-[36%]" />
+          <div className={faceGuideWrapperClass}>
+            <div className={faceGuideClass("border-white/40")} />
           </div>
         )}
 

@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from app.core.config import settings
+from app.core.storage import init_storage
 from app.api import health, face, enroll, atm
 
 
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
 
     # --- Создаём папку для загрузок ---
     os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+    init_storage()
 
     frontend_dist = _frontend_dist_dir()
     if frontend_dist.exists():
